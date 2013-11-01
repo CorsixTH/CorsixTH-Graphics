@@ -1,6 +1,5 @@
-CorsixTH-Graphics is free software, distributed under the following terms:
-
-Copyright (C) 2013 Edvin "Lego3" Linge, Albert "Alberth" Hofkamp et al.
+/*
+Copyright (c) 2013 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -19,5 +18,44 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
 
--------------------------------------------------------------------------------
+#ifndef OUTPUT_H
+#define OUTPUT_H
+
+#define BUF_SIZE    100000
+
+class DataBlock
+{
+public:
+    DataBlock();
+
+    bool Full();
+    void Add(unsigned char byte);
+    void Write(FILE *handle);
+
+    unsigned char buffer[BUF_SIZE];
+    int m_iUsed;
+    DataBlock *m_pNext;
+};
+
+class Output
+{
+public:
+    Output();
+    ~Output();
+
+    void Write(const char *fname);
+
+    void Uint8(unsigned char byte);
+    void Uint16(int val);
+    void Write(int address, unsigned char byte);
+    int Reserve(int size);
+
+    DataBlock *m_pFirst;
+    DataBlock *m_pLast;
+};
+
+#endif
+
+// vim: et sw=4 ts=4 sts=4
