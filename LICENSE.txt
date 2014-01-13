@@ -1,6 +1,22 @@
-CorsixTH-Graphics is free software, distributed under the following terms:
+CorsixTH-Graphics includes graphical content that is distributed under the
+Creative Commons Attribution-ShareAlike 4.0 License. Each sub-directory
+contains an CREATORS.txt file that states which artists have contributed to
+the content of that directory.
 
-Copyright (C) 2013 Edvin "Lego3" Linge, Albert "Alberth" Hofkamp et al.
+The license is described at http://creativecommons.org/licenses/by-sa/4.0
+while the complete license can be found at 
+
+http://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+In essence this license lets you remix, tweak and build upon the original work, 
+even for commercial purposes, as long as you correctly credit the original work
+and license your new creations under identical terms.
+
+-------------------------------------------------------------------------------
+
+CorsixTH-Graphics includes code that is distributed under the following terms:
+
+Copyright (C) 2014 Edvin "Lego3" Linge, Albert "Alberth" Hofkamp et al.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
