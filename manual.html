@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.11: http://docutils.sourceforge.net/" />
+<title>Making free graphics</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7614 2013-02-21 15:55:51Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: grey; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="making-free-graphics">
+<h1 class="title">Making free graphics</h1>
+
+<p>If the explanation in the <tt class="docutils literal">README.txt</tt> file is a bit too short, below is a
+longer discussion.</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="#pixels-images-graphics">Pixels, images, graphics</a></dt>
+<dd>It starts with a short discussion of the various topics and terms in this
+part of the world.</dd>
+<dt><a class="reference internal" href="#making-new-free-graphics-files">Making new free graphics files</a></dt>
+<dd>What to actually do to make sprites for the new free graphics, and to load
+them into CorsixTH.</dd>
+<dt><a class="reference internal" href="#compiling">Compiling</a></dt>
+<dd>The conversion from images to a free graphics file for CorsixTH is done by
+the <tt class="docutils literal">encode</tt> program, that you may want to compile yourself.</dd>
+</dl>
+<div class="section" id="pixels-images-graphics">
+<h1>Pixels, images, graphics</h1>
+<p>Before discussing how to make new free graphics, first some introductory
+explanation of the world of pixels, images, and graphics, to understand what
+is meant with each term, and how they relate to each other.</p>
+<div class="section" id="pixels">
+<h2>Pixels</h2>
+<p>The first item to discuss are properties of a pixel in the graphics. In this
+document, there are only two interesting properties, namely colour and
+opacity.</p>
+<p>The <em>colour</em> of a pixel is always expressed as a combination of the amounts of
+red, green, and blue. This is commonly known as <em>RGB</em> colours. Each amount can
+vary between <tt class="docutils literal">0</tt> and <tt class="docutils literal">255</tt>, giving you more colours than the human eye can
+distinguish.</p>
+<p>The <em>opacity</em> is how much of the background is suppressed. If you imagine two
+layers of sprites on top of each other, an opacity of <tt class="docutils literal">0</tt> of the top layer
+means you can completely see the bottom layer (the top layer is fully
+transparent). At the other end of the spectrum, an opacity of <tt class="docutils literal">255</tt> means
+you see nothing of the bottom layer through the top layer (the top layer is
+fully opaque, or non-transparent).</p>
+</div>
+<div class="section" id="sprites-and-graphics">
+<h2>Sprites and graphics</h2>
+<p>A pixel is very small. To display for example a letter, you already need a
+hundred or more pixels. As a result, everybody only speaks about large
+collections of pixels. Such a collection of related pixels is called a
+<em>sprite</em>. There are programs to create sprites, and display them.</p>
+<p>In games, hundreds to thousands of sprites are used. The total collection of
+sprites needed for the game is called <em>graphics</em>. In CorsixTH, there are two
+such sets, the original graphics that came on the Theme Hospital CD, and the
+free graphics.</p>
+</div>
+<div class="section" id="images">
+<h2>Images</h2>
+<p>A sprite also needs to be stored. This is done in an <em>image</em>. There are many
+different kinds of images, but here only <tt class="docutils literal">.png</tt> formats are used, in
+particular</p>
+<dl class="docutils">
+<dt>the <strong>8bpp paletted image format</strong></dt>
+<dd>This format is very old, from a time where computers and displays were not
+so powerful and disk space was expensive. There was no room for storing
+the RGB colour of each pixel separately. Instead, a palette was used. A
+<em>palette</em> is a table with 256 entries containing RGB colours. Each pixel
+has an index into that table, pointing to its colour.
+As a result, there can be at most 256 different colours in an 8bpp
+paletted image.
+Also for reduction in storage size, all pixels have an opacity of 255.</dd>
+<dt>the <strong>32bpp RGBA image format</strong></dt>
+<dd>In this format, each pixel has its own colour and opacity. <em>RGBA</em> states
+the order of storage of the pixel properties, with the RGB part being its
+colour, and the A (named 'Alpha') being its opacity.</dd>
+</dl>
+</div>
+<div class="section" id="recolouring">
+<h2>Recolouring</h2>
+<p>Many games use a technique called <em>recolouring</em> to make the graphics more
+diverse. The basic idea is to use the same sprite, but to change the colours
+in a systematic way to create a different look. In CorsixTH, this can be seen
+in the clothes of the patients. There are only a few different styles of
+clothing, but some styles are given a different colour to make it more
+diverse.</p>
+<p>With 8bpp paletted images, recolouring is easy. The colour of a pixel is
+retrieved from the palette, thus recolouring can be done by replacing the
+palette of the image with a different one.
+CorsixTH keeps track of the palette to use for each object in the game.</p>
+<p>With 32bpp RGBA images, there is no palette, so the above trick fails.
+Instead, it works with <em>types of recolouring</em>. For example, you can have 'cloth
+recolouring' or 'equipment recolouring'. For each pixel in the image, it must
+be decided whether it should be recoloured, and if so, to what type.
+The easiest way to store this information is by using another image, in this
+case an 8bpp paletted image. The colour index of this image is however not
+pointing to a colour but to a recolour type (where index value <tt class="docutils literal">0</tt> means 'do
+not recolour').</p>
+<p>For each type of recolouring, several palettes should be made. For example,
+there could be a 'red cloth recolouring' palette, a 'blue cloth recolouring'
+palette, and a 'yellow cloth recolouring' palette.</p>
+<p>Recolouring works by taking the RGB colour of recoloured pixels, and
+translating it to an intensity (maximum value of the red, green, and blue
+amounts). The intensity is used as index in the palette for the type of
+recolouring of that pixel.</p>
+</div>
+<div class="section" id="corsixth-graphics">
+<h2>CorsixTH graphics</h2>
+<p>Images aim to store a single sprites as compactly as possible. In games, there
+are hundreds to thousands of sprites. Keeping each one as a separate image
+would be cumbersome (you would have a thousand files). In addition, games do
+not care about compactness of storage, they need fast rendering of sprites,
+since hundreds of sprites are drawn a dozen or more times each second. For
+this reason, the CorsixTH game has its own way of storing sprites.</p>
+<p>The sprites are split between different files, one file for each large window,
+and one for the hospital view. Each file has lots of sprites. A sprite in a
+file has a simple sequential number. The first sprite in a file has number
+<tt class="docutils literal">1</tt>, the second sprite has number <tt class="docutils literal">2</tt>, and so on.</p>
+<div class="section" id="original-graphics">
+<h3>Original graphics</h3>
+<p>The <em>original graphics</em> (from the Theme Hospital CD) are stored in a format
+based on the 8bpp paletted format, but with less colours (<tt class="docutils literal">0</tt> to <tt class="docutils literal">63</tt> for
+each of the red, green and blue colours), and aimed at storing many sprites
+together. Unlike the 8bpp paletted image format, the CorsixTH format does have
+opacity, albeit only for a few values. The program also does recolouring of
+the sprites.</p>
+</div>
+<div class="section" id="free-graphics">
+<h3>Free graphics</h3>
+<p>The other set of sprites for CorsixTH is called <em>free graphics</em> (until someone
+invents a better name). Free graphics will replace all original sprites one
+day.</p>
+<p>The free graphics are based on the RGBA format, making a lot more colour and
+opacity options available. The free graphics the same file structure and
+sprite numbering of the original graphics, making it easy to relate sprites
+from different graphics with each other.</p>
+</div>
+</div>
+</div>
+<div class="section" id="making-new-free-graphics-files">
+<h1>Making new free graphics files</h1>
+<p>With all the preliminaries out of the way, the time has come to discuss
+creating of new sprites for the free graphics.</p>
+<div class="section" id="making-sprites">
+<h2>Making sprites</h2>
+<p>The first thing to do is to make one or more new sprites for the game items
+that you want to replace with your graphics. Each sprite should have the same
+size as the size of the original sprite, that is, have the same width and
+height in pixels.</p>
+<p>Since free graphics uses the RGBA format, sprites must be provided as <tt class="docutils literal">.png</tt>
+file in the 32bpp RGBA image format. If the sprite is recoloured, you also
+need to supply an 8bpp paletted file containing the recolour type information.
+The paletted file must have the same width and height as the RGBA file, and
+the sprite pixels must be at the same positions in both files.</p>
+<p>Index <tt class="docutils literal">0</tt> in the paletted image is used for denoting the pixel should not be
+recoloured, and index <tt class="docutils literal">255</tt> is used internally for displaying the original
+graphics.
+CorsixTH has a table with recolour types, and their index value. (At the time
+of writing, this table does not exist, as the free graphics currently does not
+have any recoloured sprites.)</p>
+<p>The <tt class="docutils literal">encode</tt> conversion program that takes your images and creates a free
+graphics file, can read several sprites from the same image, thus you can make
+a sprite sheet, which may be useful.
+It is useful to put the top-left corner of each sprite at an easy to remember
+position in the image, for example x and y positions at a multiple of 100.</p>
+</div>
+<div class="section" id="making-a-new-file">
+<h2>Making a new file</h2>
+<p>Once you have created one or more new sprites, they have to be put into a new
+graphics file to be read by CorsixTH. The <tt class="docutils literal">encode</tt> program performs this
+function. Here it is assumed that you have this program. If that is not the
+case, you may want to create it first. How to do that is explained below, in
+<a class="reference internal" href="#compiling">Compiling</a>.</p>
+<p>The <tt class="docutils literal">encode</tt> program needs to know what sprites you have. For this purpose
+you have to make an input file that contains the details for all new sprites
+you wish to encode into a file. For each non-recoloured sprite, you should
+make an entry in the input file like:</p>
+<pre class="literal-block">
+sprite 75 {
+    base = &quot;ground_tiles/s75.png&quot;;
+    top = 0;
+    left = 0;
+    width = 64;
+    height = 32;
+}
+</pre>
+<p>This example says that sprite number 75 is in the <tt class="docutils literal">ground_tiles/s75.png</tt>
+file (a 32bpp image file). The <tt class="docutils literal">75</tt> in the file name is not a hard
+requirement, but since there are many images, it is useful to give them a
+systematic name, for easier retrieval and identification.</p>
+<p>The <tt class="docutils literal">top</tt> and <tt class="docutils literal">left</tt> give the top-left pixel of the new sprite. The
+<tt class="docutils literal">width</tt> and <tt class="docutils literal">height</tt> give the horizontal and vertical size of the new
+sprite. With sprite sheets, the <tt class="docutils literal">top</tt> and <tt class="docutils literal">left</tt> positions change between
+sprites.</p>
+<p>For new sprites that should also be recoloured, the entry looks a little
+different:</p>
+<pre class="literal-block">
+sprite 18 {
+    base = &quot;128_0004.png&quot;;
+    left   = 0;
+    top    = 0;
+    width  = 128;
+    height = 256;
+
+    recolour = &quot;128p_0004.png&quot;;
+    layer 1 = 4;
+    layer 2 = 3;
+}
+</pre>
+<p>The first part is the same. Sprite number 18 should be created from the
+<tt class="docutils literal">128p_0004.png</tt> (32bpp RGBA) file. The new sprite is apparently 128x256
+pixels big. The <tt class="docutils literal">recolour</tt> entry points to the paletted image containing the
+recolouring type information.</p>
+<p>The easiest way to define recolouring is to use index values in the recolour
+type
+image that match with the CorsixTH recolouring requirements. If the recolour
+indices in the image do not match with the CorsixTH requirements, you can use
+<tt class="docutils literal">layer</tt> lines like <tt class="docutils literal">layer 2 = 3;</tt> to change the encoded recolouring type.
+The example layer line means that recolour type 2 in the image is changed to
+recolour type 3 in the free graphics.</p>
+<p>used different index values, or if the CorsixTH requirements changed after you
+created the recolour image, the index values need to be adapted. Rather than
+rewriting the recolour image, the encoder provides <tt class="docutils literal">layer</tt> lines, like
+<tt class="docutils literal">layer 1 = 3</tt>. You can have several such lines, if necessary.</p>
+<p>Once you have an input file with entries for each sprite that you want to
+encode, it is a simple matter of running the <tt class="docutils literal">encode</tt> program, like:</p>
+<pre class="literal-block">
+encode input_file.txt foo.sprites
+</pre>
+<p>The <tt class="docutils literal">encode</tt> program is started, it reads your new sprite entries in the
+<tt class="docutils literal">input_file.txt</tt> file, loads all the <tt class="docutils literal">.png</tt> files, and converts them to
+the <tt class="docutils literal">foo.sprites</tt> file. If CorsixTH is to use this file, the <tt class="docutils literal">foo</tt> part
+must be replaced by a name of a file in the original graphics (without file
+extension).</p>
+</div>
+<div class="section" id="loading-into-corsixth">
+<h2>Loading into CorsixTH</h2>
+<p>In the config file, you have to set <tt class="docutils literal">use_new_graphics</tt> to <tt class="docutils literal">true</tt>, and
+change <tt class="docutils literal">new_graphics_folder</tt> to a directory that contains the files with
+free graphics.</p>
+<p>Each time CorsixTH loads a file, the program first loads the file with the
+original sprites, and then it loads the file with the free graphics,
+overwriting the already loaded original sprites. By doing it in this order,
+the free graphics do not need to have all sprites, and the sprites that it
+does have are used instead of the sprites of the original graphics.</p>
+</div>
+</div>
+<div class="section" id="compiling">
+<h1>Compiling</h1>
+<p>The source code of the <tt class="docutils literal">encode</tt> program used for encoding your images into a
+free graphics file, can be found in the <tt class="docutils literal">SpriteEncoder</tt> directory.</p>
+<p>To build the entire program from its sources, you will need a scanner
+generator (<em>lex</em> or <em>flex</em>), and a parser generator (<em>yacc</em> or <em>bison</em>). To
+compile all code, you need a C++ compiler, for example <em>g++</em>. The code uses
+<tt class="docutils literal">libpng</tt> for reading the images, so that library must be available to build
+against as well. The build process for a typical Linux machine is defined in
+the <tt class="docutils literal">mk</tt> file.</p>
+<p>If you don't have a scanner generator or a parser generator, the source code
+that they generate is also included in the directory, allowing you to skip
+those generation steps.</p>
+<!-- vim: tw=78 spell sw=4 sts=4 -->
+</div>
+</div>
+</body>
+</html>
