@@ -137,7 +137,7 @@ invents a better name). Free graphics will replace all original sprites one
 day.
 
 The free graphics are based on the RGBA format, making a lot more colour and
-opacity options available. The free graphics the same file structure and
+opacity options available. The free graphics use the same file structure and
 sprite numbering of the original graphics, making it easy to relate sprites
 from different graphics with each other.
 
@@ -220,7 +220,7 @@ different::
     }
 
 The first part is the same. Sprite number 18 should be created from the
-``128p_0004.png`` (32bpp RGBA) file. The new sprite is apparently 128x256
+``128_0004.png`` (32bpp RGBA) file. The new sprite is apparently 128x256
 pixels big. The ``recolour`` entry points to the paletted image containing the
 recolouring type information.
 
@@ -231,11 +231,7 @@ indices in the image do not match with the CorsixTH requirements, you can use
 ``layer`` lines like ``layer 2 = 3;`` to change the encoded recolouring type.
 The example layer line means that recolour type 2 in the image is changed to
 recolour type 3 in the free graphics.
-
-used different index values, or if the CorsixTH requirements changed after you
-created the recolour image, the index values need to be adapted. Rather than
-rewriting the recolour image, the encoder provides ``layer`` lines, like
-``layer 1 = 3``. You can have several such lines, if necessary.
+You can have several such ``layer`` lines, if necessary.
 
 Once you have an input file with entries for each sprite that you want to
 encode, it is a simple matter of running the ``encode`` program, like::
@@ -243,7 +239,7 @@ encode, it is a simple matter of running the ``encode`` program, like::
     encode input_file.txt foo.sprites
 
 The ``encode`` program is started, it reads your new sprite entries in the
-``input_file.txt`` file, loads all the ``.png`` files, and converts them to
+``input_file.txt`` file, loads all the ``.png`` files, and converts them into
 the ``foo.sprites`` file. If CorsixTH is to use this file, the ``foo`` part
 must be replaced by a name of a file in the original graphics (without file
 extension).
@@ -258,8 +254,8 @@ free graphics.
 Each time CorsixTH loads a file, the program first loads the file with the
 original sprites, and then it loads the file with the free graphics,
 overwriting the already loaded original sprites. By doing it in this order,
-the free graphics do not need to have all sprites, and the sprites that it
-does have are used instead of the sprites of the original graphics.
+the free graphics do not need to have all sprites, while it prefers to use the
+sprites of the free graphics if available.
 
 
 Compiling
