@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -23,6 +23,7 @@ SOFTWARE.
 %{
 #include <cstdio>
 #include <string>
+#include "general.h"
 #include "ast.h"
 #include "tokens.h"
 
@@ -34,6 +35,12 @@ std::string filename;
 %x IN_COMMENT
 
 %option noyywrap
+%option nounput
+%option noinput
+
+%option never-interactive
+%option nounistd
+
 
 %%
 
@@ -50,12 +57,14 @@ std::string filename;
 "base"          { yylval.line = line; return BASEIMGKW; }
 "recolour"      { yylval.line = line; return RECOLOURKW; }
 "layer"         { yylval.line = line; return LAYERKW; }
+"x_offset"      { yylval.line = line; return X_OFFSETKW; }
+"y_offset"      { yylval.line = line; return Y_OFFSETKW; }
 
 "0"             { yylval.line = line;
                   yylval.number = 0;
                   return NUMBER; }
 
-[1-9][0-9]*     { yylval.line = line;
+-?[1-9][0-9]*   { yylval.line = line;
                   yylval.number = atoi(yytext);
                   return NUMBER; }
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -23,6 +23,7 @@ SOFTWARE.
 #include <cassert>
 #include <string>
 #include <png.h>
+#include "general.h"
 #include "image.h"
 
 uint32 MakeRGBA(uint8 r, uint8 g, uint8 b, uint8 a)
@@ -153,8 +154,115 @@ static void OpenFile(const std::string &sFilename, png_structp *pngPtr, png_info
     fclose(pFile);
 }
 
+/** Perform cropping on the image.
+ * @param pRows Data of the sprite, as loaded from the .PNG file.
+ * @param[inout] left_edge Coordinate of the left-most column of the sprite. Updated in-place.
+ * @param[inout] top_edge Coordinate of the top-most row of the sprite. Updated in-place.
+ * @param[inout] width Number of columns in the image. Updated in-place.
+ * @param[inout] height Number of rows in the image. Updated in-place.
+ * @param[inout] xoffset Horizontal offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
+ * @param[inout] yoffset Vertical offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
+ */
+static void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, int *height, int *xoffset, int *yoffset)
+{
+    int xpoint = *left_edge - *xoffset;
+    int ypoint = *top_edge - *yoffset;
+    int left = *left_edge;
+    int top = *top_edge;
+    int right = left + *width - 1;
+    int bottom = top + *height - 1;
 
-Image32bpp *Load32Bpp(const std::string &sFilename, int line, int left, int width, int top, int height)
+    while (left <= right)
+    {
+        bool ok = true;
+        for (int y = top; y <= bottom; y++)
+        {
+            uint8 *pPixel = pRows[y] + left;
+            if (pPixel[3] != 0)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if (!ok)
+            break;
+
+        left++;
+    }
+    while (left <= right)
+    {
+        bool ok = true;
+        for (int y = top; y <= bottom; y++)
+        {
+            uint8 *pPixel = pRows[y] + right;
+            if (pPixel[3] != 0)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if (!ok)
+            break;
+
+        right--;
+    }
+
+    while (top <= bottom)
+    {
+        bool ok = true;
+        for (int x = left; x <= right; x++)
+        {
+            uint8 *pPixel = pRows[top] + x;
+            if (pPixel[3] != 0)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if (!ok)
+            break;
+
+        top++;
+    }
+    while (top <= bottom)
+    {
+        bool ok = true;
+        for (int x = left; x <= right; x++)
+        {
+            uint8 *pPixel = pRows[bottom] + x;
+            if (pPixel[3] != 0)
+            {
+                ok = false;
+                break;
+            }
+        }
+        if (!ok)
+            break;
+
+        bottom--;
+    }
+
+    *left_edge = left;
+    *top_edge = top;
+    *width = right - left + 1;
+    *height = bottom - top + 1;
+    *xoffset = left - xpoint;
+    *yoffset = top - ypoint;
+}
+
+/**
+ * Load a 32bpp sprite from a file.
+ * @param sFilename Name of the sprite file to load.
+ * @param line Line number denoting the sprite definition in the input file.
+ * @param[inout] left Left-most column in the PNG that is part of the sprite. Updated in-place.
+ * @param[inout] width Number of columns in the sprite. Updated in-place.
+ * @param[inout] top Top-most row in the PNG that is part of the sprite. Updated in-place.
+ * @param[inout] height Number of rows in the sprite. Updated in-place.
+ * @param[inout] xoffset Horizontal offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
+ * @param[inout] yoffset Vertical offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
+ * @return The loaded sprite.
+ */
+Image32bpp *Load32Bpp(const std::string &sFilename, int line, int *left, int *width, int *top, int *height, int *xoffset, int *yoffset)
 {
     png_structp pngPtr;
     png_infop infoPtr;
@@ -167,14 +275,26 @@ Image32bpp *Load32Bpp(const std::string &sFilename, int line, int left, int widt
     int iBitDepth = png_get_bit_depth(pngPtr, infoPtr);
     int iColorType = png_get_color_type(pngPtr, infoPtr);
 
-    if (iWidth < left + width)
+    /* Initialize sprite width and height if not set, clamping at 0. */
+    if (*width < 0)
+        *width = iWidth - *left;
+    if (*width < 0)
+        *width = 0;
+
+    if (*height < 0)
+        *height = iHeight - *top;
+    if (*height < 0)
+        *height = 0;
+
+    /* Test whether the sprite fits in the image. */
+    if (iWidth < *left + *width)
     {
-        fprintf(stderr, "Sprite at line %d: Sprite is not wide enough, require %d columns (%d + %d) while only %d columns are available.\n", line, left + width, left, width, iWidth);
+        fprintf(stderr, "Sprite at line %d: Sprite is not wide enough, require %d columns (%d + %d) while only %d columns are available.\n", line, *left + *width, *left, *width, iWidth);
         exit(1);
     }
-    if (iHeight < top + height)
+    if (iHeight < *top + *height)
     {
-        fprintf(stderr, "Sprite at line %d: Sprite is not high enough, require %d rows (%d + %d) while only %d rows are available.\n", line, top + height, top, height, iHeight);
+        fprintf(stderr, "Sprite at line %d: Sprite is not high enough, require %d rows (%d + %d) while only %d rows are available.\n", line, *top + *height, *top, *height, iHeight);
         exit(1);
     }
 
@@ -191,12 +311,20 @@ Image32bpp *Load32Bpp(const std::string &sFilename, int line, int left, int widt
         exit(1);
     }
 
-    Image32bpp *img = new Image32bpp(width, height);
-    uint32 *pData = img->pData;
-    for (int i = 0; i < height; i++)
+    PerformCropping(pRows, left, top, width, height, xoffset, yoffset);
+    if (*width == 0 || *height == 0)
     {
-        uint8 *pRow = pRows[top + i] + left;
-        for (int j = 0; j < width; j++)
+        fprintf(stderr, "Sprite at line %d: \"%s\" is empty\n", line, sFilename.c_str());
+        png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
+        exit(1);
+    }
+
+    Image32bpp *img = new Image32bpp(*width, *height);
+    uint32 *pData = img->pData;
+    for (int i = 0; i < *height; i++)
+    {
+        uint8 *pRow = pRows[*top + i] + *left;
+        for (int j = 0; j < *width; j++)
         {
             *pData++ = MakeRGBA(pRow[0], pRow[1], pRow[2], pRow[3]);
             pRow += 4;

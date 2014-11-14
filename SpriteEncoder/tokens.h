@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.6.4.  */
+/* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Bison interface for Yacc-like parsers in C
    
@@ -58,8 +58,10 @@ extern int yydebug;
      RECOLOURKW = 267,
      SPRITEKW = 268,
      LAYERKW = 269,
-     NUMBER = 270,
-     STRING = 271
+     X_OFFSETKW = 270,
+     Y_OFFSETKW = 271,
+     NUMBER = 272,
+     STRING = 273
    };
 #endif
 
