@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +22,7 @@ SOFTWARE.
 
 %{
 #include <list>
+#include "general.h"
 #include "ast.h"
 #include <cstdio>
 
@@ -30,12 +31,13 @@ std::set<Sprite> g_oSprites;
 
 
 %token CURLY_OPEN CURLY_CLOSE EQUAL SEMICOL
-%token LEFTKW TOPKW WIDTHKW HEIGHTKW BASEIMGKW RECOLOURKW SPRITEKW LAYERKW
+%token <line> LEFTKW TOPKW WIDTHKW HEIGHTKW BASEIMGKW RECOLOURKW SPRITEKW LAYERKW
+%token <line> X_OFFSETKW Y_OFFSETKW
 
-%token<number> NUMBER
-%token<text> STRING
+%token <number> NUMBER
+%token <text> STRING
 
-%type<m_pSprite> SpriteSettings Sprite
+%type <m_pSprite> SpriteSettings Sprite
 
 %start Program
 
@@ -49,11 +51,15 @@ Program : /* empty */
         ;
 
 Sprite : SPRITEKW NUMBER CURLY_OPEN SpriteSettings CURLY_CLOSE
-         { $$ = $4; $$->m_iSprite = $2; }
+         { $$ = $4; $$->m_iSprite = $2; $$->m_iLine = $1; }
        ;
 
 SpriteSettings : /* empty */
                  { $$ = new Sprite; }
+               | SpriteSettings X_OFFSETKW EQUAL NUMBER SEMICOL
+                 { $$ = $1; $$->m_iXOffset = $4; }
+               | SpriteSettings Y_OFFSETKW EQUAL NUMBER SEMICOL
+                 { $$ = $1; $$->m_iYOffset = $4; }
                | SpriteSettings LEFTKW EQUAL NUMBER SEMICOL
                  { $$ = $1; $$->m_iLeft = $4; }
                | SpriteSettings TOPKW EQUAL NUMBER SEMICOL

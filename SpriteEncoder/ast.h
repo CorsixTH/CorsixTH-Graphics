@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -40,10 +40,12 @@ public:
 
     int m_iLine;                  // Line number of the sprite.
     int m_iSprite;                // Sprite number.
-    int m_iLeft;                  // Left coordinate in the images.
-    int m_iTop;                   // Top coordinate in the images.
-    int m_iWidth;                 // Width of the images.
-    int m_iHeight;                // Height of the images.
+    mutable int m_iLeft;          // Left coordinate in the image.
+    mutable int m_iTop;           // Top coordinate in the image.
+    mutable int m_iWidth;         // Width of the image.
+    mutable int m_iHeight;        // Height of the image.
+    mutable int m_iXOffset;       // X offset of the image in the game.
+    mutable int m_iYOffset;       // Y offset of the image in the game.
     std::string m_sBaseImage;     // Full-colour RGBA base image.
     std::string m_sRecolourImage; // Name of overlay image (if set).
     unsigned char m_aNumber[256]; // Layer number of the recolouring.

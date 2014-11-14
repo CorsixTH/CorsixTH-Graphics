@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +22,7 @@ SOFTWARE.
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include "general.h"
 #include "ast.h"
 #include "image.h"
 #include "output.h"
@@ -38,10 +39,12 @@ Sprite::Sprite()
 {
     m_iLine = -1;
     m_iSprite = -1;
-    m_iLeft = -1;
-    m_iTop = -1;
+    m_iLeft = 0;
+    m_iTop = 0;
     m_iWidth = -1;
     m_iHeight = -1;
+    m_iXOffset = 0;
+    m_iYOffset = 0;
     m_sBaseImage = sUnset;
     m_sRecolourImage = sUnset;
     for (int i = 0; i < 256; i++)
@@ -55,22 +58,13 @@ void Sprite::SetRecolour(const std::string &sFilename)
     m_sRecolourImage = sFilename;
 }
 
-static void Report(int iNumber, int iLine, const char *pMsg)
-{
-    if (iNumber < 0)
-    {
-        fprintf(stderr, "Sprite at line %d: Missing %s\n", iLine, pMsg);
-        exit(1);
-    }
-}
-
 void Sprite::Check() const
 {
-    Report(m_iSprite, m_iLine, "sprite number");
-    Report(m_iLeft,   m_iLine, "left edge coordinate");
-    Report(m_iTop,    m_iLine, "top edge coordinate");
-    Report(m_iWidth,  m_iLine, "sprite width");
-    Report(m_iHeight, m_iLine, "sprite height");
+    if (m_iSprite < 0)
+    {
+        fprintf(stderr, "Sprite at line %d: Missing sprite number\n", m_iLine);
+        exit(1);
+    }
 
     if (m_sBaseImage == sUnset)
     {
@@ -235,7 +229,7 @@ static void Encode32bpp(int iWidth, int iHeight, const Image32bpp &oBase, const 
 
 void Sprite::Write(Output *pOut) const
 {
-    Image32bpp *pBase = Load32Bpp(m_sBaseImage, m_iLine, m_iLeft, m_iWidth, m_iTop, m_iHeight);
+    Image32bpp *pBase = Load32Bpp(m_sBaseImage, m_iLine, &m_iLeft, &m_iWidth, &m_iTop, &m_iHeight, &m_iXOffset, &m_iYOffset);
     if (pBase == NULL)
     {
         fprintf(stderr, "Warning: Skipping sprite %d at line %d: Image load failed.\n", m_iSprite, m_iLine);
@@ -251,7 +245,9 @@ void Sprite::Write(Output *pOut) const
     int iAddress = pOut->Reserve(4);
     pOut->Uint16(m_iSprite);
     pOut->Uint16(m_iWidth);
-    pOut->Uint16(m_iHeight); // XXX Add length of this sprite?
+    pOut->Uint16(m_iHeight);
+    pOut->Uint16(m_iXOffset);
+    pOut->Uint16(m_iYOffset);
     Encode32bpp(m_iWidth, m_iHeight, *pBase, pLayer, pOut, m_aNumber);
 
     int iLength = pOut->Reserve(0) - (iAddress + 4); // Start counting after the length.

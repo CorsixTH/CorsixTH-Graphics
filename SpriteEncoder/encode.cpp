@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +22,7 @@ SOFTWARE.
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "general.h"
 #include "ast.h"
 #include "output.h"
 
@@ -69,8 +70,9 @@ int main(int iArgc, char *pArgv[])
     }
 
     Output out;
+    // Write header.
     out.Uint8('C'); out.Uint8('T'); out.Uint8('H'); out.Uint8('G');
-    out.Uint8(2); out.Uint8(0);
+    out.Uint8(3); out.Uint8(0);
 
     for (std::set<Sprite>::iterator iter = g_oSprites.begin(); iter != g_oSprites.end(); iter++)
     {

@@ -462,7 +462,7 @@ the sprites.</p>
 invents a better name). Free graphics will replace all original sprites one
 day.</p>
 <p>The free graphics are based on the RGBA format, making a lot more colour and
-opacity options available. The free graphics the same file structure and
+opacity options available. The free graphics use the same file structure and
 sprite numbering of the original graphics, making it easy to relate sprites
 from different graphics with each other.</p>
 </div>
@@ -475,9 +475,8 @@ creating of new sprites for the free graphics.</p>
 <div class="section" id="making-sprites">
 <h2>Making sprites</h2>
 <p>The first thing to do is to make one or more new sprites for the game items
-that you want to replace with your graphics. Each sprite should have the same
-size as the size of the original sprite, that is, have the same width and
-height in pixels.</p>
+that you want to replace with your graphics. Use the sprite anim viewer to
+check which sprites exist and what they contain.</p>
 <p>Since free graphics uses the RGBA format, sprites must be provided as <tt class="docutils literal">.png</tt>
 file in the 32bpp RGBA image format. If the sprite is recoloured, you also
 need to supply an 8bpp paletted file containing the recolour type information.
@@ -491,9 +490,9 @@ of writing, this table does not exist, as the free graphics currently does not
 have any recoloured sprites.)</p>
 <p>The <tt class="docutils literal">encode</tt> conversion program that takes your images and creates a free
 graphics file, can read several sprites from the same image, thus you can make
-a sprite sheet, which may be useful.
-It is useful to put the top-left corner of each sprite at an easy to remember
-position in the image, for example x and y positions at a multiple of 100.</p>
+a sprite sheet, which may be useful. In a sprite sheet, it is useful to put
+the top-left corner of each sprite at an easy to remember position in the
+image, for example x and y positions at a multiple of 100.</p>
 </div>
 <div class="section" id="making-a-new-file">
 <h2>Making a new file</h2>
@@ -513,16 +512,28 @@ sprite 75 {
     left = 0;
     width = 64;
     height = 32;
+    x_offset = -30;
+    y_offset = -25;
 }
 </pre>
-<p>This example says that sprite number 75 is in the <tt class="docutils literal">ground_tiles/s75.png</tt>
-file (a 32bpp image file). The <tt class="docutils literal">75</tt> in the file name is not a hard
-requirement, but since there are many images, it is useful to give them a
-systematic name, for easier retrieval and identification.</p>
+<p>This example says that sprite number 75 (the <tt class="docutils literal">75</tt> immediately after
+<tt class="docutils literal">sprite</tt>) is in the <tt class="docutils literal">ground_tiles/s75.png</tt> file (a 32bpp image file). The
+<tt class="docutils literal">75</tt> in the file name is not a hard requirement, but since there are many
+images, it is useful to give them a systematic name, for easier retrieval and
+identification.</p>
 <p>The <tt class="docutils literal">top</tt> and <tt class="docutils literal">left</tt> give the top-left pixel of the new sprite. The
 <tt class="docutils literal">width</tt> and <tt class="docutils literal">height</tt> give the horizontal and vertical size of the new
 sprite. With sprite sheets, the <tt class="docutils literal">top</tt> and <tt class="docutils literal">left</tt> positions change between
-sprites.</p>
+sprites. If you omit them, the top and left become 0, and width and height
+become equal to the remaining space of the image file (that is, from the left
+position to the right edge of the file, and from the top position to the
+bottom edge of the file).</p>
+<p>The <tt class="docutils literal">x_offset</tt> and <tt class="docutils literal">y_offset</tt> is where the top-left position of the sprite
+should be relative to the position of the tile corner furthest away from you
+at the screen. If you use <tt class="docutils literal">0, 0</tt>, the top-left edge of the sprite is at the
+position of the corner, <tt class="docutils literal"><span class="pre">-30,</span> <span class="pre">-25</span></tt> means that the top-left edge of the
+sprite is 30 pixels to the left, and 25 pixels up from the corner position.
+If you don't give offsets, they are <tt class="docutils literal">0</tt>.</p>
 <p>For new sprites that should also be recoloured, the entry looks a little
 different:</p>
 <pre class="literal-block">
@@ -539,7 +550,7 @@ sprite 18 {
 }
 </pre>
 <p>The first part is the same. Sprite number 18 should be created from the
-<tt class="docutils literal">128p_0004.png</tt> (32bpp RGBA) file. The new sprite is apparently 128x256
+<tt class="docutils literal">128_0004.png</tt> (32bpp RGBA) file. The new sprite is apparently 128x256
 pixels big. The <tt class="docutils literal">recolour</tt> entry points to the paletted image containing the
 recolouring type information.</p>
 <p>The easiest way to define recolouring is to use index values in the recolour
@@ -548,18 +559,15 @@ image that match with the CorsixTH recolouring requirements. If the recolour
 indices in the image do not match with the CorsixTH requirements, you can use
 <tt class="docutils literal">layer</tt> lines like <tt class="docutils literal">layer 2 = 3;</tt> to change the encoded recolouring type.
 The example layer line means that recolour type 2 in the image is changed to
-recolour type 3 in the free graphics.</p>
-<p>used different index values, or if the CorsixTH requirements changed after you
-created the recolour image, the index values need to be adapted. Rather than
-rewriting the recolour image, the encoder provides <tt class="docutils literal">layer</tt> lines, like
-<tt class="docutils literal">layer 1 = 3</tt>. You can have several such lines, if necessary.</p>
+recolour type 3 in the free graphics.
+You can have several such <tt class="docutils literal">layer</tt> lines, if necessary.</p>
 <p>Once you have an input file with entries for each sprite that you want to
 encode, it is a simple matter of running the <tt class="docutils literal">encode</tt> program, like:</p>
 <pre class="literal-block">
 encode input_file.txt foo.sprites
 </pre>
 <p>The <tt class="docutils literal">encode</tt> program is started, it reads your new sprite entries in the
-<tt class="docutils literal">input_file.txt</tt> file, loads all the <tt class="docutils literal">.png</tt> files, and converts them to
+<tt class="docutils literal">input_file.txt</tt> file, loads all the <tt class="docutils literal">.png</tt> files, and converts them into
 the <tt class="docutils literal">foo.sprites</tt> file. If CorsixTH is to use this file, the <tt class="docutils literal">foo</tt> part
 must be replaced by a name of a file in the original graphics (without file
 extension).</p>
@@ -572,8 +580,8 @@ free graphics.</p>
 <p>Each time CorsixTH loads a file, the program first loads the file with the
 original sprites, and then it loads the file with the free graphics,
 overwriting the already loaded original sprites. By doing it in this order,
-the free graphics do not need to have all sprites, and the sprites that it
-does have are used instead of the sprites of the original graphics.</p>
+the free graphics do not need to have all sprites, while it prefers to use the
+sprites of the free graphics if available.</p>
 </div>
 </div>
 <div class="section" id="compiling">

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +22,7 @@ SOFTWARE.
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include "general.h"
 #include "output.h"
 
 DataBlock::DataBlock()

@@ -150,9 +150,8 @@ creating of new sprites for the free graphics.
 Making sprites
 ~~~~~~~~~~~~~~
 The first thing to do is to make one or more new sprites for the game items
-that you want to replace with your graphics. Each sprite should have the same
-size as the size of the original sprite, that is, have the same width and
-height in pixels.
+that you want to replace with your graphics. Use the sprite anim viewer to
+check which sprites exist and what they contain.
 
 Since free graphics uses the RGBA format, sprites must be provided as ``.png``
 file in the 32bpp RGBA image format. If the sprite is recoloured, you also
@@ -169,9 +168,9 @@ have any recoloured sprites.)
 
 The ``encode`` conversion program that takes your images and creates a free
 graphics file, can read several sprites from the same image, thus you can make
-a sprite sheet, which may be useful.
-It is useful to put the top-left corner of each sprite at an easy to remember
-position in the image, for example x and y positions at a multiple of 100.
+a sprite sheet, which may be useful. In a sprite sheet, it is useful to put
+the top-left corner of each sprite at an easy to remember position in the
+image, for example x and y positions at a multiple of 100.
 
 Making a new file
 ~~~~~~~~~~~~~~~~~
@@ -192,17 +191,30 @@ make an entry in the input file like::
         left = 0;
         width = 64;
         height = 32;
+        x_offset = -30;
+        y_offset = -25;
     }
 
-This example says that sprite number 75 is in the ``ground_tiles/s75.png``
-file (a 32bpp image file). The ``75`` in the file name is not a hard
-requirement, but since there are many images, it is useful to give them a
-systematic name, for easier retrieval and identification.
+This example says that sprite number 75 (the ``75`` immediately after
+``sprite``) is in the ``ground_tiles/s75.png`` file (a 32bpp image file). The
+``75`` in the file name is not a hard requirement, but since there are many
+images, it is useful to give them a systematic name, for easier retrieval and
+identification.
 
 The ``top`` and ``left`` give the top-left pixel of the new sprite. The
 ``width`` and ``height`` give the horizontal and vertical size of the new
 sprite. With sprite sheets, the ``top`` and ``left`` positions change between
-sprites.
+sprites. If you omit them, the top and left become 0, and width and height
+become equal to the remaining space of the image file (that is, from the left
+position to the right edge of the file, and from the top position to the
+bottom edge of the file).
+
+The ``x_offset`` and ``y_offset`` is where the top-left position of the sprite
+should be relative to the position of the tile corner furthest away from you
+at the screen. If you use ``0, 0``, the top-left edge of the sprite is at the
+position of the corner, ``-30, -25`` means that the top-left edge of the
+sprite is 30 pixels to the left, and 25 pixels up from the corner position.
+If you don't give offsets, they are ``0``.
 
 For new sprites that should also be recoloured, the entry looks a little
 different::
