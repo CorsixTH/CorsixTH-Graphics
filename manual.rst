@@ -1,267 +1,212 @@
-====================
-Making free graphics
-====================
-If the explanation in the ``README.txt`` file is a bit too short, below is a
-longer discussion.
+=============================
+Making free animated graphics
+=============================
 
-`Pixels, images, graphics`_
-    It starts with a short discussion of the various topics and terms in this
-    part of the world.
+This document explains how to make animation files that the CorsixTH program
+can load and use in the game.
 
-`Making new free graphics files`_
-    What to actually do to make sprites for the new free graphics, and to load
-    them into CorsixTH.
+In CorsixTH, everything is animated. A swinging door, a walking nurse, or an
+operation being performed. Even a desk or a plant is animated (repeatedly
+showing the same picture, so the object looks like it is standing still).
 
-`Compiling`_
-    The conversion from images to a free graphics file for CorsixTH is done by
-    the ``encode`` program, that you may want to compile yourself.
+In the general case however, an animation has different pictures showing
+through time. A single picture displayed at a point in time is called
+a *frame*. By showing slightly different pictures with each frame, and
+displaying enough frames per second, the illusion of fluent motion is created.
 
-
-Pixels, images, graphics
-========================
-Before discussing how to make new free graphics, first some introductory
-explanation of the world of pixels, images, and graphics, to understand what
-is meant with each term, and how they relate to each other.
-
-Pixels
-~~~~~~
-The first item to discuss are properties of a pixel in the graphics. In this
-document, there are only two interesting properties, namely colour and
-opacity.
-
-The *colour* of a pixel is always expressed as a combination of the amounts of
-red, green, and blue. This is commonly known as *RGB* colours. Each amount can
-vary between ``0`` and ``255``, giving you more colours than the human eye can
-distinguish.
-
-The *opacity* is how much of the background is suppressed. If you imagine two
-layers of sprites on top of each other, an opacity of ``0`` of the top layer
-means you can completely see the bottom layer (the top layer is fully
-transparent). At the other end of the spectrum, an opacity of ``255`` means
-you see nothing of the bottom layer through the top layer (the top layer is
-fully opaque, or non-transparent).
-
-Sprites and graphics
-~~~~~~~~~~~~~~~~~~~~
-A pixel is very small. To display for example a letter, you already need a
-hundred or more pixels. As a result, everybody only speaks about large
-collections of pixels. Such a collection of related pixels is called a
-*sprite*. There are programs to create sprites, and display them.
-
-In games, hundreds to thousands of sprites are used. The total collection of
-sprites needed for the game is called *graphics*. In CorsixTH, there are two
-such sets, the original graphics that came on the Theme Hospital CD, and the
-free graphics.
-
-Images
-~~~~~~
-A sprite also needs to be stored. This is done in an *image*. There are many
-different kinds of images, but here only ``.png`` formats are used, in
-particular
-
-the **8bpp paletted image format**
-    This format is very old, from a time where computers and displays were not
-    so powerful and disk space was expensive. There was no room for storing
-    the RGB colour of each pixel separately. Instead, a palette was used. A
-    *palette* is a table with 256 entries containing RGB colours. Each pixel
-    has an index into that table, pointing to its colour.
-    As a result, there can be at most 256 different colours in an 8bpp
-    paletted image.
-    Also for reduction in storage size, all pixels have an opacity of 255.
-
-the **32bpp RGBA image format**
-    In this format, each pixel has its own colour and opacity. *RGBA* states
-    the order of storage of the pixel properties, with the RGB part being its
-    colour, and the A (named 'Alpha') being its opacity.
-
-Recolouring
-~~~~~~~~~~~
-Many games use a technique called *recolouring* to make the graphics more
-diverse. The basic idea is to use the same sprite, but to change the colours
-in a systematic way to create a different look. In CorsixTH, this can be seen
-in the clothes of the patients. There are only a few different styles of
-clothing, but some styles are given a different colour to make it more
-diverse.
-
-With 8bpp paletted images, recolouring is easy. The colour of a pixel is
-retrieved from the palette, thus recolouring can be done by replacing the
-palette of the image with a different one.
-CorsixTH keeps track of the palette to use for each object in the game.
-
-With 32bpp RGBA images, there is no palette, so the above trick fails.
-Instead, it works with *types of recolouring*. For example, you can have 'cloth
-recolouring' or 'equipment recolouring'. For each pixel in the image, it must
-be decided whether it should be recoloured, and if so, to what type.
-The easiest way to store this information is by using another image, in this
-case an 8bpp paletted image. The colour index of this image is however not
-pointing to a colour but to a recolour type (where index value ``0`` means 'do
-not recolour').
-
-For each type of recolouring, several palettes should be made. For example,
-there could be a 'red cloth recolouring' palette, a 'blue cloth recolouring'
-palette, and a 'yellow cloth recolouring' palette.
-
-Recolouring works by taking the RGB colour of recoloured pixels, and
-translating it to an intensity (maximum value of the red, green, and blue
-amounts). The intensity is used as index in the palette for the type of
-recolouring of that pixel.
+A frame may consist of a single *sprite*, but it may also have many different
+sprites. The advantages of having several sprites that together make up the
+frame is that you can compose an animation, different parts of the animation
+can be added, removed, or changed independently. Also, it enables layering of
+the sprites. Sprites are rendered first to last. By adding an operating table
+as one of the first elements, it can stay the same no matter what is moving on
+top or in front of it. Last but not least, sprites can be re-used between
+animations. All of this enables reduction of the number of sprites, which
+translates to fewer sprites, and eventually reduced memory usage.
 
 
-CorsixTH graphics
-~~~~~~~~~~~~~~~~~
-Images aim to store a single sprites as compactly as possible. In games, there
-are hundreds to thousands of sprites. Keeping each one as a separate image
-would be cumbersome (you would have a thousand files). In addition, games do
-not care about compactness of storage, they need fast rendering of sprites,
-since hundreds of sprites are drawn a dozen or more times each second. For
-this reason, the CorsixTH game has its own way of storing sprites.
+Animation specification file
+============================
+In an animation specification file, the animations are defined. It looks
+like::
 
-The sprites are split between different files, one file for each large window,
-and one for the hospital view. Each file has lots of sprites. A sprite in a
-file has a simple sequential number. The first sprite in a file has number
-``1``, the second sprite has number ``2``, and so on.
+    animation "foo" {
+        tile_size = 64;
+        view = north;
 
-Original graphics
-.................
-The *original graphics* (from the Theme Hospital CD) are stored in a format
-based on the 8bpp paletted format, but with less colours (``0`` to ``63`` for
-each of the red, green and blue colours), and aimed at storing many sprites
-together. Unlike the 8bpp paletted image format, the CorsixTH format does have
-opacity, albeit only for a few values. The program also does recolouring of
-the sprites.
+        frame {
+            sound = 1;
 
-Free graphics
-.............
-The other set of sprites for CorsixTH is called *free graphics* (until someone
-invents a better name). Free graphics will replace all original sprites one
-day.
+            element {
+                base = "spritefile.png";
 
-The free graphics are based on the RGBA format, making a lot more colour and
-opacity options available. The free graphics use the same file structure and
-sprite numbering of the original graphics, making it easy to relate sprites
-from different graphics with each other.
+                x_offset = -25;
+                y_offset = -30;
+                alpha = 50;
+                hor_flip;
+            }
 
+            element {
+                ...
+            }
+        }
 
-Making new free graphics files
-==============================
-With all the preliminaries out of the way, the time has come to discuss
-creating of new sprites for the free graphics.
+        frame {
+            ...
+        }
 
-Making sprites
-~~~~~~~~~~~~~~
-The first thing to do is to make one or more new sprites for the game items
-that you want to replace with your graphics. Each sprite should have the same
-size as the size of the original sprite, that is, have the same width and
-height in pixels.
-
-Since free graphics uses the RGBA format, sprites must be provided as ``.png``
-file in the 32bpp RGBA image format. If the sprite is recoloured, you also
-need to supply an 8bpp paletted file containing the recolour type information.
-The paletted file must have the same width and height as the RGBA file, and
-the sprite pixels must be at the same positions in both files.
-
-Index ``0`` in the paletted image is used for denoting the pixel should not be
-recoloured, and index ``255`` is used internally for displaying the original
-graphics.
-CorsixTH has a table with recolour types, and their index value. (At the time
-of writing, this table does not exist, as the free graphics currently does not
-have any recoloured sprites.)
-
-The ``encode`` conversion program that takes your images and creates a free
-graphics file, can read several sprites from the same image, thus you can make
-a sprite sheet, which may be useful.
-It is useful to put the top-left corner of each sprite at an easy to remember
-position in the image, for example x and y positions at a multiple of 100.
-
-Making a new file
-~~~~~~~~~~~~~~~~~
-Once you have created one or more new sprites, they have to be put into a new
-graphics file to be read by CorsixTH. The ``encode`` program performs this
-function. Here it is assumed that you have this program. If that is not the
-case, you may want to create it first. How to do that is explained below, in
-`Compiling`_.
-
-The ``encode`` program needs to know what sprites you have. For this purpose
-you have to make an input file that contains the details for all new sprites
-you wish to encode into a file. For each non-recoloured sprite, you should
-make an entry in the input file like::
-
-    sprite 75 {
-        base = "ground_tiles/s75.png";
-        top = 0;
-        left = 0;
-        width = 64;
-        height = 32;
+        ...
     }
 
-This example says that sprite number 75 is in the ``ground_tiles/s75.png``
-file (a 32bpp image file). The ``75`` in the file name is not a hard
-requirement, but since there are many images, it is useful to give them a
-systematic name, for easier retrieval and identification.
-
-The ``top`` and ``left`` give the top-left pixel of the new sprite. The
-``width`` and ``height`` give the horizontal and vertical size of the new
-sprite. With sprite sheets, the ``top`` and ``left`` positions change between
-sprites.
-
-For new sprites that should also be recoloured, the entry looks a little
-different::
-
-    sprite 18 {
-        base = "128_0004.png";
-        left   = 0;
-        top    = 0;
-        width  = 128;
-        height = 256;
-
-        recolour = "128p_0004.png";
-        layer 1 = 4;
-        layer 2 = 3;
+    animation "..." {
+        ...
     }
 
-The first part is the same. Sprite number 18 should be created from the
-``128_0004.png`` (32bpp RGBA) file. The new sprite is apparently 128x256
-pixels big. The ``recolour`` entry points to the paletted image containing the
-recolouring type information.
+    ...
 
-The easiest way to define recolouring is to use index values in the recolour
-type
-image that match with the CorsixTH recolouring requirements. If the recolour
-indices in the image do not match with the CorsixTH requirements, you can use
-``layer`` lines like ``layer 2 = 3;`` to change the encoded recolouring type.
-The example layer line means that recolour type 2 in the image is changed to
-recolour type 3 in the free graphics.
-You can have several such ``layer`` lines, if necessary.
+The file has a sequence of ``animation`` blocks. Each animation has a name
+(``"foo"`` in the example), and properties ``tile_size`` and ``view``. The
+former is optional, and defaults to 64. At the time of writing this manual,
+that is also the only valid value for the tile size. In the future, the
+CorsixTH program may be extended with other tile sizes.
 
-Once you have an input file with entries for each sprite that you want to
-encode, it is a simple matter of running the ``encode`` program, like::
+The ``view`` property indicates that this ``"foo"`` animation is for the case
+where the object being animated has been built in ``north`` direction. Often
+several animations exist with the same name, but a different viewing direction
+(``north``, ``east``, ``south``, and ``west`` directions exist). For example a
+swinging door in a north-south wall versus a swinging door in an east-west
+wall. At first, only some of the possible directions will be used by the
+CorsixTH program.
 
-    encode input_file.txt foo.sprites
+Below the properties of the animations come the frames. An animation has at
+least one frame, but there can be dozens to hundreds frames, depending on the
+length of the animation. All animations with the same name (but different view
+direction) must have the same number of frames. (It would be weird if a
+treatment would be faster in one direction and slower in another direction.)
 
-The ``encode`` program is started, it reads your new sprite entries in the
-``input_file.txt`` file, loads all the ``.png`` files, and converts them into
-the ``foo.sprites`` file. If CorsixTH is to use this file, the ``foo`` part
-must be replaced by a name of a file in the original graphics (without file
-extension).
+Each frame starts with a ``frame`` keyword. Directly below a ``frame`` are its
+properties, namely ``sound``. If a non-zero value is used, it denotes that the
+sound matching with that number should be played when this frame is displayed.
+
+In a frame, there are one or more ``element`` blocks. Each element defines a
+sprite to be shown at a stated position. A simple case is that a sprite has
+its own ``.png`` file, as shown here (other cases are explained below).
+If a sprite is in its own sprite file, only mentioning the name of the
+``.png`` file is sufficient as in ``base = "spritefile.png;``. The next
+problem is where to position the sprite in the animation. Each animation has
+an origin point (where depends on the animation). The ``x_offset`` and
+``y_offset`` define the number of pixels to the right and down, relative to
+the origin, to display the sprite. (The origin is often near the bottom of the
+animation, these number are usually negative, since ``-25`` to the right means
+``25`` to the left, similarly, ``-30`` down means ``30`` up.)
+
+After taking a sprite from its file, it is cropped. The offsets are adjusted
+as well, so the final position of the sprite is not changed.
+
+The ``alpha = 50;`` is an effect to make the sprite semi-transparent (``50%``
+opaque). You can also use ``75`` for 75% opaqueness, and of course ``100`` for
+full opaqueness.
+The ``hor_flip`` flips right and left of the sprite, to save you from making a
+new sprite. There is also a ``vert_flip`` for flipping the sprite vertically.
+The flip settings do not take a value.
+
+Taking a sprite from a sprite sheet
+===================================
+A second common form of sprites is to have a sprite sheet, a large image
+file, containing many sprites, each in its own area of the image. Only
+mentioning the file is not sufficient any more in that case, you also have to
+define the area to take from the file. That looks like::
+
+    base = "spritesheet.png";
+    left = 10;
+    top = 110;
+    width = 60;
+    height = 40;
+
+The name of the sprite sheet file is given. The ``left`` and ``top`` define
+the top-left coordinate in the sheet of the sprite where the area that is
+wanted, starts. The ``width`` defines the horizontal length, while the
+``height`` defines the vertical length.
+
+The given area is taken from the file, and treated like that area is the entire
+file. The other steps are just as explained above, the sprite gets offsets, it
+is cropped, and effects are applied.
+
+Recolour images
+===============
+Recolouring is the process of changing the colour of part of the sprite, for
+example to have different colours of cloths.
+
+It is currently unclear how much use this will have (conditional displaying
+explained below is another way to achieve it too), but the future will tell.
+
+Recolouring can be done with a single sprite file, or with a sprite sheet. The
+example here shows the case of a sprite file. In an ``element``, it looks
+like::
+
+    base = "spritefile.png";
+    recolour = "recolourfile.png";
+
+    layer 4 = 2;
+
+The ``base`` is as before, it defines a 32bpp image file. The ``recolour``
+also defines a file, but that must be an 8bpp image file with the same image
+dimensions as the file given in ``base``. The palette of the 8bpp image is not
+used, only the numeric values are of interest. For each pixel of the sprite
+(in case of a sprite sheet, each pixel in the defined area), the numeric index
+of the pixel at the same position in the recolour file is consulted to decide
+what to do. If its numeric value is 0, no recolouring is applied. If it is any
+other value (for example, it is ``1``), the intensity of the 32bpp pixel is
+determined instead. That intensity is used by the CorsixTH program as index in
+recolour table 1 to decide the actual colour to display.
+
+Note that recolour table 1 will change depending on how to recolour. Non-zero
+numeric values in the 8bpp images are therefore like logical layers (a
+``cloth`` layer), rather than pointing to a known table.
+
+If the numeric values in the recolour 8bpp file are not correct, ``layer x
+= y;`` can be used to change them. The meaning of such a statement is 'if you
+encounter numeric value x, treat it as-if it is value y'. The renumbering is
+not transitive, for example::
+
+    layer 1 = 2;
+    layer 2 = 1;
+
+will swap layers 1 and 2.
 
 
-Loading into CorsixTH
-~~~~~~~~~~~~~~~~~~~~~
-In the config file, you have to set ``use_new_graphics`` to ``true``, and
-change ``new_graphics_folder`` to a directory that contains the files with
-free graphics.
+Conditional displaying
+======================
+CorsixTH also has a conditional display feature for an element. Confusingly,
+this feature uses LayerClass and LayerId in the program. To avoid confusion
+with recolour layers, the animation encoder program names it *conditional
+displaying*. If you write the line::
 
-Each time CorsixTH loads a file, the program first loads the file with the
-original sprites, and then it loads the file with the free graphics,
-overwriting the already loaded original sprites. By doing it in this order,
-the free graphics do not need to have all sprites, while it prefers to use the
-sprites of the free graphics if available.
+    display_if 3 = 2;
+
+in an element, the element will be displayed if and only if the value of layer
+class ``3`` is equal to ``2``.
+
+At the time of writing, there is limited information available on these
+display condition values. The documentation says there are thirteen layer
+classes (``0`` to ``12``), and layer classes ``0`` and ``1`` are ignored (that
+is, the element is always rendered, no matter what value you specify).
+
+As more information becomes available, it may be useful to add names for
+classes and ids to the animation encoder, to increase readability.
 
 
-Compiling
-=========
-The source code of the ``encode`` program used for encoding your images into a
-free graphics file, can be found in the ``SpriteEncoder`` directory.
+Loading animation files into CorsixTH
+=====================================
+
+Not yet known.
+
+
+Compiling the animation encoder program
+=======================================
+In the ``AnimationEncoder`` directory are the source files of the ``encode``
+program, that takes an animation specification file, and produces an animation
+data file that can be read by CorsixTH.
 
 To build the entire program from its sources, you will need a scanner
 generator (*lex* or *flex*), and a parser generator (*yacc* or *bison*). To
@@ -273,5 +218,6 @@ the ``mk`` file.
 If you don't have a scanner generator or a parser generator, the source code
 that they generate is also included in the directory, allowing you to skip
 those generation steps.
+
 
 .. vim: tw=78 spell sw=4 sts=4
