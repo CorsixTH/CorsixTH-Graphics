@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.6.4.  */
+/* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Bison interface for Yacc-like parsers in C
    
@@ -54,12 +54,27 @@ extern int yydebug;
      TOPKW = 263,
      WIDTHKW = 264,
      HEIGHTKW = 265,
-     BASEIMGKW = 266,
+     BASE_IMGKW = 266,
      RECOLOURKW = 267,
-     SPRITEKW = 268,
-     LAYERKW = 269,
-     NUMBER = 270,
-     STRING = 271
+     LAYERKW = 268,
+     ALPHAKW = 269,
+     HOR_FLIPKW = 270,
+     VERT_FLIPKW = 271,
+     X_OFFSETKW = 272,
+     Y_OFFSETKW = 273,
+     ANIMATIONKW = 274,
+     FRAMEKW = 275,
+     TILE_SIZEKW = 276,
+     VIEWKW = 277,
+     SOUNDKW = 278,
+     NORTHKW = 279,
+     WESTKW = 280,
+     SOUTHKW = 281,
+     EASTKW = 282,
+     ELEMENTKW = 283,
+     DISPLAYKW = 284,
+     NUMBER = 285,
+     STRING = 286
    };
 #endif
 

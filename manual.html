@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.11: http://docutils.sourceforge.net/" />
-<title>Making free graphics</title>
+<title>Making free animated graphics</title>
 <style type="text/css">
 
 /*
@@ -338,248 +338,192 @@ ul.auto-toc {
 </style>
 </head>
 <body>
-<div class="document" id="making-free-graphics">
-<h1 class="title">Making free graphics</h1>
+<div class="document" id="making-free-animated-graphics">
+<h1 class="title">Making free animated graphics</h1>
 
-<p>If the explanation in the <tt class="docutils literal">README.txt</tt> file is a bit too short, below is a
-longer discussion.</p>
-<dl class="docutils">
-<dt><a class="reference internal" href="#pixels-images-graphics">Pixels, images, graphics</a></dt>
-<dd>It starts with a short discussion of the various topics and terms in this
-part of the world.</dd>
-<dt><a class="reference internal" href="#making-new-free-graphics-files">Making new free graphics files</a></dt>
-<dd>What to actually do to make sprites for the new free graphics, and to load
-them into CorsixTH.</dd>
-<dt><a class="reference internal" href="#compiling">Compiling</a></dt>
-<dd>The conversion from images to a free graphics file for CorsixTH is done by
-the <tt class="docutils literal">encode</tt> program, that you may want to compile yourself.</dd>
-</dl>
-<div class="section" id="pixels-images-graphics">
-<h1>Pixels, images, graphics</h1>
-<p>Before discussing how to make new free graphics, first some introductory
-explanation of the world of pixels, images, and graphics, to understand what
-is meant with each term, and how they relate to each other.</p>
-<div class="section" id="pixels">
-<h2>Pixels</h2>
-<p>The first item to discuss are properties of a pixel in the graphics. In this
-document, there are only two interesting properties, namely colour and
-opacity.</p>
-<p>The <em>colour</em> of a pixel is always expressed as a combination of the amounts of
-red, green, and blue. This is commonly known as <em>RGB</em> colours. Each amount can
-vary between <tt class="docutils literal">0</tt> and <tt class="docutils literal">255</tt>, giving you more colours than the human eye can
-distinguish.</p>
-<p>The <em>opacity</em> is how much of the background is suppressed. If you imagine two
-layers of sprites on top of each other, an opacity of <tt class="docutils literal">0</tt> of the top layer
-means you can completely see the bottom layer (the top layer is fully
-transparent). At the other end of the spectrum, an opacity of <tt class="docutils literal">255</tt> means
-you see nothing of the bottom layer through the top layer (the top layer is
-fully opaque, or non-transparent).</p>
-</div>
-<div class="section" id="sprites-and-graphics">
-<h2>Sprites and graphics</h2>
-<p>A pixel is very small. To display for example a letter, you already need a
-hundred or more pixels. As a result, everybody only speaks about large
-collections of pixels. Such a collection of related pixels is called a
-<em>sprite</em>. There are programs to create sprites, and display them.</p>
-<p>In games, hundreds to thousands of sprites are used. The total collection of
-sprites needed for the game is called <em>graphics</em>. In CorsixTH, there are two
-such sets, the original graphics that came on the Theme Hospital CD, and the
-free graphics.</p>
-</div>
-<div class="section" id="images">
-<h2>Images</h2>
-<p>A sprite also needs to be stored. This is done in an <em>image</em>. There are many
-different kinds of images, but here only <tt class="docutils literal">.png</tt> formats are used, in
-particular</p>
-<dl class="docutils">
-<dt>the <strong>8bpp paletted image format</strong></dt>
-<dd>This format is very old, from a time where computers and displays were not
-so powerful and disk space was expensive. There was no room for storing
-the RGB colour of each pixel separately. Instead, a palette was used. A
-<em>palette</em> is a table with 256 entries containing RGB colours. Each pixel
-has an index into that table, pointing to its colour.
-As a result, there can be at most 256 different colours in an 8bpp
-paletted image.
-Also for reduction in storage size, all pixels have an opacity of 255.</dd>
-<dt>the <strong>32bpp RGBA image format</strong></dt>
-<dd>In this format, each pixel has its own colour and opacity. <em>RGBA</em> states
-the order of storage of the pixel properties, with the RGB part being its
-colour, and the A (named 'Alpha') being its opacity.</dd>
-</dl>
-</div>
-<div class="section" id="recolouring">
-<h2>Recolouring</h2>
-<p>Many games use a technique called <em>recolouring</em> to make the graphics more
-diverse. The basic idea is to use the same sprite, but to change the colours
-in a systematic way to create a different look. In CorsixTH, this can be seen
-in the clothes of the patients. There are only a few different styles of
-clothing, but some styles are given a different colour to make it more
-diverse.</p>
-<p>With 8bpp paletted images, recolouring is easy. The colour of a pixel is
-retrieved from the palette, thus recolouring can be done by replacing the
-palette of the image with a different one.
-CorsixTH keeps track of the palette to use for each object in the game.</p>
-<p>With 32bpp RGBA images, there is no palette, so the above trick fails.
-Instead, it works with <em>types of recolouring</em>. For example, you can have 'cloth
-recolouring' or 'equipment recolouring'. For each pixel in the image, it must
-be decided whether it should be recoloured, and if so, to what type.
-The easiest way to store this information is by using another image, in this
-case an 8bpp paletted image. The colour index of this image is however not
-pointing to a colour but to a recolour type (where index value <tt class="docutils literal">0</tt> means 'do
-not recolour').</p>
-<p>For each type of recolouring, several palettes should be made. For example,
-there could be a 'red cloth recolouring' palette, a 'blue cloth recolouring'
-palette, and a 'yellow cloth recolouring' palette.</p>
-<p>Recolouring works by taking the RGB colour of recoloured pixels, and
-translating it to an intensity (maximum value of the red, green, and blue
-amounts). The intensity is used as index in the palette for the type of
-recolouring of that pixel.</p>
-</div>
-<div class="section" id="corsixth-graphics">
-<h2>CorsixTH graphics</h2>
-<p>Images aim to store a single sprites as compactly as possible. In games, there
-are hundreds to thousands of sprites. Keeping each one as a separate image
-would be cumbersome (you would have a thousand files). In addition, games do
-not care about compactness of storage, they need fast rendering of sprites,
-since hundreds of sprites are drawn a dozen or more times each second. For
-this reason, the CorsixTH game has its own way of storing sprites.</p>
-<p>The sprites are split between different files, one file for each large window,
-and one for the hospital view. Each file has lots of sprites. A sprite in a
-file has a simple sequential number. The first sprite in a file has number
-<tt class="docutils literal">1</tt>, the second sprite has number <tt class="docutils literal">2</tt>, and so on.</p>
-<div class="section" id="original-graphics">
-<h3>Original graphics</h3>
-<p>The <em>original graphics</em> (from the Theme Hospital CD) are stored in a format
-based on the 8bpp paletted format, but with less colours (<tt class="docutils literal">0</tt> to <tt class="docutils literal">63</tt> for
-each of the red, green and blue colours), and aimed at storing many sprites
-together. Unlike the 8bpp paletted image format, the CorsixTH format does have
-opacity, albeit only for a few values. The program also does recolouring of
-the sprites.</p>
-</div>
-<div class="section" id="free-graphics">
-<h3>Free graphics</h3>
-<p>The other set of sprites for CorsixTH is called <em>free graphics</em> (until someone
-invents a better name). Free graphics will replace all original sprites one
-day.</p>
-<p>The free graphics are based on the RGBA format, making a lot more colour and
-opacity options available. The free graphics the same file structure and
-sprite numbering of the original graphics, making it easy to relate sprites
-from different graphics with each other.</p>
-</div>
-</div>
-</div>
-<div class="section" id="making-new-free-graphics-files">
-<h1>Making new free graphics files</h1>
-<p>With all the preliminaries out of the way, the time has come to discuss
-creating of new sprites for the free graphics.</p>
-<div class="section" id="making-sprites">
-<h2>Making sprites</h2>
-<p>The first thing to do is to make one or more new sprites for the game items
-that you want to replace with your graphics. Each sprite should have the same
-size as the size of the original sprite, that is, have the same width and
-height in pixels.</p>
-<p>Since free graphics uses the RGBA format, sprites must be provided as <tt class="docutils literal">.png</tt>
-file in the 32bpp RGBA image format. If the sprite is recoloured, you also
-need to supply an 8bpp paletted file containing the recolour type information.
-The paletted file must have the same width and height as the RGBA file, and
-the sprite pixels must be at the same positions in both files.</p>
-<p>Index <tt class="docutils literal">0</tt> in the paletted image is used for denoting the pixel should not be
-recoloured, and index <tt class="docutils literal">255</tt> is used internally for displaying the original
-graphics.
-CorsixTH has a table with recolour types, and their index value. (At the time
-of writing, this table does not exist, as the free graphics currently does not
-have any recoloured sprites.)</p>
-<p>The <tt class="docutils literal">encode</tt> conversion program that takes your images and creates a free
-graphics file, can read several sprites from the same image, thus you can make
-a sprite sheet, which may be useful.
-It is useful to put the top-left corner of each sprite at an easy to remember
-position in the image, for example x and y positions at a multiple of 100.</p>
-</div>
-<div class="section" id="making-a-new-file">
-<h2>Making a new file</h2>
-<p>Once you have created one or more new sprites, they have to be put into a new
-graphics file to be read by CorsixTH. The <tt class="docutils literal">encode</tt> program performs this
-function. Here it is assumed that you have this program. If that is not the
-case, you may want to create it first. How to do that is explained below, in
-<a class="reference internal" href="#compiling">Compiling</a>.</p>
-<p>The <tt class="docutils literal">encode</tt> program needs to know what sprites you have. For this purpose
-you have to make an input file that contains the details for all new sprites
-you wish to encode into a file. For each non-recoloured sprite, you should
-make an entry in the input file like:</p>
+<p>This document explains how to make animation files that the CorsixTH program
+can load and use in the game.</p>
+<p>In CorsixTH, everything is animated. A swinging door, a walking nurse, or an
+operation being performed. Even a desk or a plant is animated (repeatedly
+showing the same picture, so the object looks like it is standing still).</p>
+<p>In the general case however, an animation has different pictures showing
+through time. A single picture displayed at a point in time is called
+a <em>frame</em>. By showing slightly different pictures with each frame, and
+displaying enough frames per second, the illusion of fluent motion is created.</p>
+<p>A frame may consist of a single <em>sprite</em>, but it may also have many different
+sprites. The advantages of having several sprites that together make up the
+frame is that you can compose an animation, different parts of the animation
+can be added, removed, or changed independently. Also, it enables layering of
+the sprites. Sprites are rendered first to last. By adding an operating table
+as one of the first elements, it can stay the same no matter what is moving on
+top or in front of it. Last but not least, sprites can be re-used between
+animations. All of this enables reduction of the number of sprites, which
+translates to fewer sprites, and eventually reduced memory usage.</p>
+<div class="section" id="animation-specification-file">
+<h1>Animation specification file</h1>
+<p>In an animation specification file, the animations are defined. It looks
+like:</p>
 <pre class="literal-block">
-sprite 75 {
-    base = &quot;ground_tiles/s75.png&quot;;
-    top = 0;
-    left = 0;
-    width = 64;
-    height = 32;
-}
-</pre>
-<p>This example says that sprite number 75 is in the <tt class="docutils literal">ground_tiles/s75.png</tt>
-file (a 32bpp image file). The <tt class="docutils literal">75</tt> in the file name is not a hard
-requirement, but since there are many images, it is useful to give them a
-systematic name, for easier retrieval and identification.</p>
-<p>The <tt class="docutils literal">top</tt> and <tt class="docutils literal">left</tt> give the top-left pixel of the new sprite. The
-<tt class="docutils literal">width</tt> and <tt class="docutils literal">height</tt> give the horizontal and vertical size of the new
-sprite. With sprite sheets, the <tt class="docutils literal">top</tt> and <tt class="docutils literal">left</tt> positions change between
-sprites.</p>
-<p>For new sprites that should also be recoloured, the entry looks a little
-different:</p>
-<pre class="literal-block">
-sprite 18 {
-    base = &quot;128_0004.png&quot;;
-    left   = 0;
-    top    = 0;
-    width  = 128;
-    height = 256;
+animation &quot;foo&quot; {
+    tile_size = 64;
+    view = north;
 
-    recolour = &quot;128p_0004.png&quot;;
-    layer 1 = 4;
-    layer 2 = 3;
+    frame {
+        sound = 1;
+
+        element {
+            base = &quot;spritefile.png&quot;;
+
+            x_offset = -25;
+            y_offset = -30;
+            alpha = 50;
+            hor_flip;
+        }
+
+        element {
+            ...
+        }
+    }
+
+    frame {
+        ...
+    }
+
+    ...
 }
+
+animation &quot;...&quot; {
+    ...
+}
+
+...
 </pre>
-<p>The first part is the same. Sprite number 18 should be created from the
-<tt class="docutils literal">128p_0004.png</tt> (32bpp RGBA) file. The new sprite is apparently 128x256
-pixels big. The <tt class="docutils literal">recolour</tt> entry points to the paletted image containing the
-recolouring type information.</p>
-<p>The easiest way to define recolouring is to use index values in the recolour
-type
-image that match with the CorsixTH recolouring requirements. If the recolour
-indices in the image do not match with the CorsixTH requirements, you can use
-<tt class="docutils literal">layer</tt> lines like <tt class="docutils literal">layer 2 = 3;</tt> to change the encoded recolouring type.
-The example layer line means that recolour type 2 in the image is changed to
-recolour type 3 in the free graphics.</p>
-<p>used different index values, or if the CorsixTH requirements changed after you
-created the recolour image, the index values need to be adapted. Rather than
-rewriting the recolour image, the encoder provides <tt class="docutils literal">layer</tt> lines, like
-<tt class="docutils literal">layer 1 = 3</tt>. You can have several such lines, if necessary.</p>
-<p>Once you have an input file with entries for each sprite that you want to
-encode, it is a simple matter of running the <tt class="docutils literal">encode</tt> program, like:</p>
+<p>The file has a sequence of <tt class="docutils literal">animation</tt> blocks. Each animation has a name
+(<tt class="docutils literal">&quot;foo&quot;</tt> in the example), and properties <tt class="docutils literal">tile_size</tt> and <tt class="docutils literal">view</tt>. The
+former is optional, and defaults to 64. At the time of writing this manual,
+that is also the only valid value for the tile size. In the future, the
+CorsixTH program may be extended with other tile sizes.</p>
+<p>The <tt class="docutils literal">view</tt> property indicates that this <tt class="docutils literal">&quot;foo&quot;</tt> animation is for the case
+where the object being animated has been built in <tt class="docutils literal">north</tt> direction. Often
+several animations exist with the same name, but a different viewing direction
+(<tt class="docutils literal">north</tt>, <tt class="docutils literal">east</tt>, <tt class="docutils literal">south</tt>, and <tt class="docutils literal">west</tt> directions exist). For example a
+swinging door in a north-south wall versus a swinging door in an east-west
+wall. At first, only some of the possible directions will be used by the
+CorsixTH program.</p>
+<p>Below the properties of the animations come the frames. An animation has at
+least one frame, but there can be dozens to hundreds frames, depending on the
+length of the animation. All animations with the same name (but different view
+direction) must have the same number of frames. (It would be weird if a
+treatment would be faster in one direction and slower in another direction.)</p>
+<p>Each frame starts with a <tt class="docutils literal">frame</tt> keyword. Directly below a <tt class="docutils literal">frame</tt> are its
+properties, namely <tt class="docutils literal">sound</tt>. If a non-zero value is used, it denotes that the
+sound matching with that number should be played when this frame is displayed.</p>
+<p>In a frame, there are one or more <tt class="docutils literal">element</tt> blocks. Each element defines a
+sprite to be shown at a stated position. A simple case is that a sprite has
+its own <tt class="docutils literal">.png</tt> file, as shown here (other cases are explained below).
+If a sprite is in its own sprite file, only mentioning the name of the
+<tt class="docutils literal">.png</tt> file is sufficient as in <tt class="docutils literal">base = &quot;spritefile.png;</tt>. The next
+problem is where to position the sprite in the animation. Each animation has
+an origin point (where depends on the animation). The <tt class="docutils literal">x_offset</tt> and
+<tt class="docutils literal">y_offset</tt> define the number of pixels to the right and down, relative to
+the origin, to display the sprite. (The origin is often near the bottom of the
+animation, these number are usually negative, since <tt class="docutils literal"><span class="pre">-25</span></tt> to the right means
+<tt class="docutils literal">25</tt> to the left, similarly, <tt class="docutils literal"><span class="pre">-30</span></tt> down means <tt class="docutils literal">30</tt> up.)</p>
+<p>After taking a sprite from its file, it is cropped. The offsets are adjusted
+as well, so the final position of the sprite is not changed.</p>
+<p>The <tt class="docutils literal">alpha = 50;</tt> is an effect to make the sprite semi-transparent (<tt class="docutils literal">50%</tt>
+opaque). You can also use <tt class="docutils literal">75</tt> for 75% opaqueness, and of course <tt class="docutils literal">100</tt> for
+full opaqueness.
+The <tt class="docutils literal">hor_flip</tt> flips right and left of the sprite, to save you from making a
+new sprite. There is also a <tt class="docutils literal">vert_flip</tt> for flipping the sprite vertically.
+The flip settings do not take a value.</p>
+</div>
+<div class="section" id="taking-a-sprite-from-a-sprite-sheet">
+<h1>Taking a sprite from a sprite sheet</h1>
+<p>A second common form of sprites is to have a sprite sheet, a large image
+file, containing many sprites, each in its own area of the image. Only
+mentioning the file is not sufficient any more in that case, you also have to
+define the area to take from the file. That looks like:</p>
 <pre class="literal-block">
-encode input_file.txt foo.sprites
+base = &quot;spritesheet.png&quot;;
+left = 10;
+top = 110;
+width = 60;
+height = 40;
 </pre>
-<p>The <tt class="docutils literal">encode</tt> program is started, it reads your new sprite entries in the
-<tt class="docutils literal">input_file.txt</tt> file, loads all the <tt class="docutils literal">.png</tt> files, and converts them to
-the <tt class="docutils literal">foo.sprites</tt> file. If CorsixTH is to use this file, the <tt class="docutils literal">foo</tt> part
-must be replaced by a name of a file in the original graphics (without file
-extension).</p>
+<p>The name of the sprite sheet file is given. The <tt class="docutils literal">left</tt> and <tt class="docutils literal">top</tt> define
+the top-left coordinate in the sheet of the sprite where the area that is
+wanted, starts. The <tt class="docutils literal">width</tt> defines the horizontal length, while the
+<tt class="docutils literal">height</tt> defines the vertical length.</p>
+<p>The given area is taken from the file, and treated like that area is the entire
+file. The other steps are just as explained above, the sprite gets offsets, it
+is cropped, and effects are applied.</p>
 </div>
-<div class="section" id="loading-into-corsixth">
-<h2>Loading into CorsixTH</h2>
-<p>In the config file, you have to set <tt class="docutils literal">use_new_graphics</tt> to <tt class="docutils literal">true</tt>, and
-change <tt class="docutils literal">new_graphics_folder</tt> to a directory that contains the files with
-free graphics.</p>
-<p>Each time CorsixTH loads a file, the program first loads the file with the
-original sprites, and then it loads the file with the free graphics,
-overwriting the already loaded original sprites. By doing it in this order,
-the free graphics do not need to have all sprites, and the sprites that it
-does have are used instead of the sprites of the original graphics.</p>
+<div class="section" id="recolour-images">
+<h1>Recolour images</h1>
+<p>Recolouring is the process of changing the colour of part of the sprite, for
+example to have different colours of cloths.</p>
+<p>It is currently unclear how much use this will have (conditional displaying
+explained below is another way to achieve it too), but the future will tell.</p>
+<p>Recolouring can be done with a single sprite file, or with a sprite sheet. The
+example here shows the case of a sprite file. In an <tt class="docutils literal">element</tt>, it looks
+like:</p>
+<pre class="literal-block">
+base = &quot;spritefile.png&quot;;
+recolour = &quot;recolourfile.png&quot;;
+
+layer 4 = 2;
+</pre>
+<p>The <tt class="docutils literal">base</tt> is as before, it defines a 32bpp image file. The <tt class="docutils literal">recolour</tt>
+also defines a file, but that must be an 8bpp image file with the same image
+dimensions as the file given in <tt class="docutils literal">base</tt>. The palette of the 8bpp image is not
+used, only the numeric values are of interest. For each pixel of the sprite
+(in case of a sprite sheet, each pixel in the defined area), the numeric index
+of the pixel at the same position in the recolour file is consulted to decide
+what to do. If its numeric value is 0, no recolouring is applied. If it is any
+other value (for example, it is <tt class="docutils literal">1</tt>), the intensity of the 32bpp pixel is
+determined instead. That intensity is used by the CorsixTH program as index in
+recolour table 1 to decide the actual colour to display.</p>
+<p>Note that recolour table 1 will change depending on how to recolour. Non-zero
+numeric values in the 8bpp images are therefore like logical layers (a
+<tt class="docutils literal">cloth</tt> layer), rather than pointing to a known table.</p>
+<p>If the numeric values in the recolour 8bpp file are not correct, <tt class="docutils literal">layer x
+= y;</tt> can be used to change them. The meaning of such a statement is 'if you
+encounter numeric value x, treat it as-if it is value y'. The renumbering is
+not transitive, for example:</p>
+<pre class="literal-block">
+layer 1 = 2;
+layer 2 = 1;
+</pre>
+<p>will swap layers 1 and 2.</p>
 </div>
+<div class="section" id="conditional-displaying">
+<h1>Conditional displaying</h1>
+<p>CorsixTH also has a conditional display feature for an element. Confusingly,
+this feature uses LayerClass and LayerId in the program. To avoid confusion
+with recolour layers, the animation encoder program names it <em>conditional
+displaying</em>. If you write the line:</p>
+<pre class="literal-block">
+display_if 3 = 2;
+</pre>
+<p>in an element, the element will be displayed if and only if the value of layer
+class <tt class="docutils literal">3</tt> is equal to <tt class="docutils literal">2</tt>.</p>
+<p>At the time of writing, there is limited information available on these
+display condition values. The documentation says there are thirteen layer
+classes (<tt class="docutils literal">0</tt> to <tt class="docutils literal">12</tt>), and layer classes <tt class="docutils literal">0</tt> and <tt class="docutils literal">1</tt> are ignored (that
+is, the element is always rendered, no matter what value you specify).</p>
+<p>As more information becomes available, it may be useful to add names for
+classes and ids to the animation encoder, to increase readability.</p>
 </div>
-<div class="section" id="compiling">
-<h1>Compiling</h1>
-<p>The source code of the <tt class="docutils literal">encode</tt> program used for encoding your images into a
-free graphics file, can be found in the <tt class="docutils literal">SpriteEncoder</tt> directory.</p>
+<div class="section" id="loading-animation-files-into-corsixth">
+<h1>Loading animation files into CorsixTH</h1>
+<p>Not yet known.</p>
+</div>
+<div class="section" id="compiling-the-animation-encoder-program">
+<h1>Compiling the animation encoder program</h1>
+<p>In the <tt class="docutils literal">AnimationEncoder</tt> directory are the source files of the <tt class="docutils literal">encode</tt>
+program, that takes an animation specification file, and produces an animation
+data file that can be read by CorsixTH.</p>
 <p>To build the entire program from its sources, you will need a scanner
 generator (<em>lex</em> or <em>flex</em>), and a parser generator (<em>yacc</em> or <em>bison</em>). To
 compile all code, you need a C++ compiler, for example <em>g++</em>. The code uses

@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.6.4.  */
+/* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Bison implementation for Yacc-like parsers in C
    
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.6.4"
+#define YYBISON_VERSION "2.7"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -62,16 +62,16 @@
 
 
 /* Copy the first part of user declarations.  */
-/* Line 358 of yacc.c  */
+/* Line 371 of yacc.c  */
 #line 23 "parser.y"
 
-#include <list>
-#include "ast.h"
 #include <cstdio>
+#include "ast.h"
+#include "scanparse.h"
 
-std::set<Sprite> g_oSprites;
+std::vector<Animation> g_vAnimations;
 
-/* Line 358 of yacc.c  */
+/* Line 371 of yacc.c  */
 #line 76 "parser.cpp"
 
 # ifndef YY_NULL
@@ -116,12 +116,27 @@ extern int yydebug;
      TOPKW = 263,
      WIDTHKW = 264,
      HEIGHTKW = 265,
-     BASEIMGKW = 266,
+     BASE_IMGKW = 266,
      RECOLOURKW = 267,
-     SPRITEKW = 268,
-     LAYERKW = 269,
-     NUMBER = 270,
-     STRING = 271
+     LAYERKW = 268,
+     ALPHAKW = 269,
+     HOR_FLIPKW = 270,
+     VERT_FLIPKW = 271,
+     X_OFFSETKW = 272,
+     Y_OFFSETKW = 273,
+     ANIMATIONKW = 274,
+     FRAMEKW = 275,
+     TILE_SIZEKW = 276,
+     VIEWKW = 277,
+     SOUNDKW = 278,
+     NORTHKW = 279,
+     WESTKW = 280,
+     SOUTHKW = 281,
+     EASTKW = 282,
+     ELEMENTKW = 283,
+     DISPLAYKW = 284,
+     NUMBER = 285,
+     STRING = 286
    };
 #endif
 
@@ -152,8 +167,8 @@ int yyparse ();
 
 /* Copy the second part of user declarations.  */
 
-/* Line 377 of yacc.c  */
-#line 157 "parser.cpp"
+/* Line 390 of yacc.c  */
+#line 172 "parser.cpp"
 
 #ifdef short
 # undef short
@@ -373,20 +388,20 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   38
+#define YYLAST   103
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  17
+#define YYNTOKENS  32
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  13
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  12
+#define YYNRULES  35
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  38
+#define YYNSTATES  91
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   271
+#define YYMAXUTOK   286
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -421,7 +436,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31
 };
 
 #if YYDEBUG
@@ -429,26 +445,37 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     4,     7,    13,    14,    20,    26,    32,
-      38,    44,    50
+       0,     0,     3,     4,     7,    14,    16,    19,    24,    29,
+      31,    33,    35,    37,    39,    42,    48,    49,    54,    56,
+      59,    64,    66,    69,    74,    79,    84,    89,    94,    99,
+     104,   109,   115,   121,   126,   128
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      18,     0,    -1,    -1,    18,    19,    -1,    13,    15,     3,
-      20,     4,    -1,    -1,    20,     7,     5,    15,     6,    -1,
-      20,     8,     5,    15,     6,    -1,    20,     9,     5,    15,
-       6,    -1,    20,    10,     5,    15,     6,    -1,    20,    11,
-       5,    16,     6,    -1,    20,    12,     5,    16,     6,    -1,
-      20,    14,    15,     5,    15,     6,    -1
+      33,     0,    -1,    -1,    33,    34,    -1,    19,    31,     3,
+      35,    38,     4,    -1,    36,    -1,    35,    36,    -1,    21,
+       5,    30,     6,    -1,    22,     5,    37,     6,    -1,    24,
+      -1,    27,    -1,    26,    -1,    25,    -1,    39,    -1,    38,
+      39,    -1,    20,     3,    40,    41,     4,    -1,    -1,    23,
+       5,    30,     6,    -1,    42,    -1,    41,    42,    -1,    28,
+       3,    43,     4,    -1,    44,    -1,    43,    44,    -1,     8,
+       5,    30,     6,    -1,     7,     5,    30,     6,    -1,     9,
+       5,    30,     6,    -1,    10,     5,    30,     6,    -1,    17,
+       5,    30,     6,    -1,    18,     5,    30,     6,    -1,    11,
+       5,    31,     6,    -1,    12,     5,    31,     6,    -1,    13,
+      30,     5,    30,     6,    -1,    29,    30,     5,    30,     6,
+      -1,    14,     5,    30,     6,    -1,    15,    -1,    16,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    46,    46,    47,    51,    56,    57,    59,    61,    63,
-      65,    67,    69
+       0,    56,    56,    59,    65,    74,    80,    87,    92,    99,
+     104,   109,   114,   121,   127,   134,   144,   148,   155,   161,
+     168,   176,   182,   189,   194,   199,   204,   209,   214,   219,
+     224,   229,   234,   239,   244,   249
 };
 #endif
 
@@ -458,9 +485,14 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "CURLY_OPEN", "CURLY_CLOSE", "EQUAL",
-  "SEMICOL", "LEFTKW", "TOPKW", "WIDTHKW", "HEIGHTKW", "BASEIMGKW",
-  "RECOLOURKW", "SPRITEKW", "LAYERKW", "NUMBER", "STRING", "$accept",
-  "Program", "Sprite", "SpriteSettings", YY_NULL
+  "SEMICOL", "LEFTKW", "TOPKW", "WIDTHKW", "HEIGHTKW", "BASE_IMGKW",
+  "RECOLOURKW", "LAYERKW", "ALPHAKW", "HOR_FLIPKW", "VERT_FLIPKW",
+  "X_OFFSETKW", "Y_OFFSETKW", "ANIMATIONKW", "FRAMEKW", "TILE_SIZEKW",
+  "VIEWKW", "SOUNDKW", "NORTHKW", "WESTKW", "SOUTHKW", "EASTKW",
+  "ELEMENTKW", "DISPLAYKW", "NUMBER", "STRING", "$accept", "Program",
+  "Animation", "AnimationProperties", "AnimationProperty", "Direction",
+  "AnimationFrames", "AnimationFrame", "FrameProperty", "FrameElements",
+  "FrameElement", "ElementFields", "ElementField", YY_NULL
 };
 #endif
 
@@ -470,22 +502,28 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270,   271
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     285,   286
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    17,    18,    18,    19,    20,    20,    20,    20,    20,
-      20,    20,    20
+       0,    32,    33,    33,    34,    35,    35,    36,    36,    37,
+      37,    37,    37,    38,    38,    39,    40,    40,    41,    41,
+      42,    43,    43,    44,    44,    44,    44,    44,    44,    44,
+      44,    44,    44,    44,    44,    44
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     0,     2,     5,     0,     5,     5,     5,     5,
-       5,     5,     6
+       0,     2,     0,     2,     6,     1,     2,     4,     4,     1,
+       1,     1,     1,     1,     2,     5,     0,     4,     1,     2,
+       4,     1,     2,     4,     4,     4,     4,     4,     4,     4,
+       4,     5,     5,     4,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default reduction number in state STATE-NUM.
@@ -493,33 +531,47 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,     0,     3,     0,     5,     0,     4,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       6,     7,     8,     9,    10,    11,     0,    12
+       2,     0,     1,     0,     3,     0,     0,     0,     0,     0,
+       5,     0,     0,     0,     6,     0,    13,     0,     9,    12,
+      11,    10,     0,    16,     4,    14,     7,     8,     0,     0,
+       0,     0,     0,    18,     0,     0,    15,    19,    17,     0,
+       0,     0,     0,     0,     0,     0,     0,    34,    35,     0,
+       0,     0,     0,    21,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    20,    22,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    24,    23,
+      25,    26,    29,    30,     0,    33,    27,    28,     0,    31,
+      32
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     4,     7
+      -1,     1,     4,     9,    10,    22,    15,    16,    29,    32,
+      33,    52,    53
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -14
+#define YYPACT_NINF -13
 static const yytype_int8 yypact[] =
 {
-     -14,     0,   -14,   -13,   -14,     7,   -14,    -3,   -14,    -2,
-       9,    10,    11,    12,    13,     4,     5,     6,     8,    14,
-      -4,    15,    17,    18,    19,    20,    21,    22,    24,    23,
-     -14,   -14,   -14,   -14,   -14,   -14,    26,   -14
+     -13,     1,   -13,   -12,   -13,    37,     0,    39,    40,    21,
+     -13,    -6,    -9,    43,   -13,    19,   -13,    41,   -13,   -13,
+     -13,   -13,    42,    27,   -13,   -13,   -13,   -13,    46,    24,
+      23,    51,    -2,   -13,    49,    20,   -13,   -13,   -13,    52,
+      53,    54,    55,    56,    57,    26,    58,   -13,   -13,    59,
+      60,    36,    -4,   -13,    38,    44,    45,    47,    48,    50,
+      62,    61,    63,    64,    65,   -13,   -13,    66,    67,    70,
+      72,    74,    76,    68,    77,    78,    79,    69,   -13,   -13,
+     -13,   -13,   -13,   -13,    80,   -13,   -13,   -13,    81,   -13,
+     -13
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -14,   -14,   -14,   -14
+     -13,   -13,   -13,   -13,    83,   -13,   -13,    73,   -13,   -13,
+      71,   -13,    17
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -528,34 +580,54 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       2,     8,     5,    16,     9,    10,    11,    12,    13,    14,
-       6,    15,    27,     3,    17,    18,    19,    20,    21,    22,
-      23,    24,    29,    25,    30,    31,    32,    33,    34,    26,
-      35,    28,    37,     0,     0,     0,     0,     0,    36
+      65,     2,    36,    39,    40,    41,    42,    43,    44,    45,
+      46,    47,    48,    49,    50,    18,    19,    20,    21,     5,
+       3,     7,     8,    24,    17,    51,    31,    39,    40,    41,
+      42,    43,    44,    45,    46,    47,    48,    49,    50,    13,
+       6,    13,     7,     8,    11,    12,    23,    26,    27,    51,
+      28,    30,    31,    34,    35,    38,    60,    54,    55,    56,
+      57,    58,    59,    61,    62,    63,    64,    73,    67,    66,
+      77,     0,    78,    79,    68,    69,    80,    70,    81,    71,
+      82,    72,    83,    85,    86,    87,    89,    90,    25,     0,
+       0,    74,    14,    75,    76,     0,     0,     0,    84,    88,
+       0,     0,     0,    37
 };
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-14)))
+  (!!((Yystate) == (-13)))
 
 #define yytable_value_is_error(Yytable_value) \
   YYID (0)
 
 static const yytype_int8 yycheck[] =
 {
-       0,     4,    15,     5,     7,     8,     9,    10,    11,    12,
-       3,    14,    16,    13,     5,     5,     5,     5,     5,    15,
-      15,    15,     5,    15,     6,     6,     6,     6,     6,    15,
-       6,    16,     6,    -1,    -1,    -1,    -1,    -1,    15
+       4,     0,     4,     7,     8,     9,    10,    11,    12,    13,
+      14,    15,    16,    17,    18,    24,    25,    26,    27,    31,
+      19,    21,    22,     4,    30,    29,    28,     7,     8,     9,
+      10,    11,    12,    13,    14,    15,    16,    17,    18,    20,
+       3,    20,    21,    22,     5,     5,     3,     6,     6,    29,
+      23,     5,    28,    30,     3,     6,    30,     5,     5,     5,
+       5,     5,     5,     5,     5,     5,    30,     5,    30,    52,
+       5,    -1,     6,     6,    30,    30,     6,    30,     6,    31,
+       6,    31,     6,     6,     6,     6,     6,     6,    15,    -1,
+      -1,    30,     9,    30,    30,    -1,    -1,    -1,    30,    30,
+      -1,    -1,    -1,    32
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    18,     0,    13,    19,    15,     3,    20,     4,     7,
-       8,     9,    10,    11,    12,    14,     5,     5,     5,     5,
-       5,     5,    15,    15,    15,    15,    15,    16,    16,     5,
-       6,     6,     6,     6,     6,     6,    15,     6
+       0,    33,     0,    19,    34,    31,     3,    21,    22,    35,
+      36,     5,     5,    20,    36,    38,    39,    30,    24,    25,
+      26,    27,    37,     3,     4,    39,     6,     6,    23,    40,
+       5,    28,    41,    42,    30,     3,     4,    42,     6,     7,
+       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    29,    43,    44,     5,     5,     5,     5,     5,     5,
+      30,     5,     5,     5,    30,     4,    44,    30,    30,    30,
+      30,    31,    31,     5,    30,    30,    30,     5,     6,     6,
+       6,     6,     6,     6,    30,     6,     6,     6,    30,     6,
+       6
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -602,47 +674,18 @@ do                                                              \
     }								\
 while (YYID (0))
 
-
+/* Error token number */
 #define YYTERROR	1
 #define YYERRCODE	256
 
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
-    do                                                                  \
-      if (YYID (N))                                                     \
-        {                                                               \
-          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
-          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
-          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
-          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
-        }                                                               \
-      else                                                              \
-        {                                                               \
-          (Current).first_line   = (Current).last_line   =              \
-            YYRHSLOC (Rhs, 0).last_line;                                \
-          (Current).first_column = (Current).last_column =              \
-            YYRHSLOC (Rhs, 0).last_column;                              \
-        }                                                               \
-    while (YYID (0))
-#endif
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-
-
 
 /* This macro is provided for backward compatibility. */
-
 #ifndef YY_LOCATION_PRINT
 # define YY_LOCATION_PRINT(File, Loc) ((void) 0)
 #endif
 
 
 /* YYLEX -- calling `yylex' with the right arguments.  */
-
 #ifdef YYLEX_PARAM
 # define YYLEX yylex (YYLEX_PARAM)
 #else
@@ -705,7 +748,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
   switch (yytype)
     {
       default:
-	break;
+        break;
     }
 }
 
@@ -947,7 +990,6 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 {
   YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
-  YYSIZE_T yysize1;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
   const char *yyformat = YY_NULL;
@@ -1010,11 +1052,13 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                     break;
                   }
                 yyarg[yycount++] = yytname[yyx];
-                yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
-                if (! (yysize <= yysize1
-                       && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-                  return 2;
-                yysize = yysize1;
+                {
+                  YYSIZE_T yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
+                  if (! (yysize <= yysize1
+                         && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+                    return 2;
+                  yysize = yysize1;
+                }
               }
         }
     }
@@ -1034,10 +1078,12 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
 # undef YYCASE_
     }
 
-  yysize1 = yysize + yystrlen (yyformat);
-  if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
-    return 2;
-  yysize = yysize1;
+  {
+    YYSIZE_T yysize1 = yysize + yystrlen (yyformat);
+    if (! (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
+      return 2;
+    yysize = yysize1;
+  }
 
   if (*yymsg_alloc < yysize)
     {
@@ -1097,7 +1143,7 @@ yydestruct (yymsg, yytype, yyvaluep)
     {
 
       default:
-	break;
+        break;
     }
 }
 
@@ -1108,16 +1154,16 @@ yydestruct (yymsg, yytype, yyvaluep)
 int yychar;
 
 
-#ifndef YYLVAL_INITIALIZE
-# define YYLVAL_INITIALIZE()
-#endif
 #ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END
 #endif
+#ifndef YY_INITIAL_VALUE
+# define YY_INITIAL_VALUE(Value) /* Nothing. */
+#endif
 
 /* The semantic value of the lookahead symbol.  */
-YYSTYPE yylval;
+YYSTYPE yylval YY_INITIAL_VALUE(yyval_default);
 
 /* Number of syntax errors so far.  */
 int yynerrs;
@@ -1193,8 +1239,8 @@ yyparse ()
      Keep to zero when no symbol should be popped.  */
   int yylen = 0;
 
-  yyss = yyssa;
-  yyvs = yyvsa;
+  yyssp = yyss = yyssa;
+  yyvsp = yyvs = yyvsa;
   yystacksize = YYINITDEPTH;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
@@ -1203,15 +1249,6 @@ yyparse ()
   yyerrstatus = 0;
   yynerrs = 0;
   yychar = YYEMPTY; /* Cause a token to be read.  */
-
-  /* Initialize stack pointers.
-     Waste one element of value and location stack
-     so that they stay on the same level as the state stack.
-     The wasted elements are never initialized.  */
-  yyssp = yyss;
-  yyvsp = yyvs;
-
-  YYLVAL_INITIALIZE ();
   goto yysetstate;
 
 /*------------------------------------------------------------.
@@ -1391,74 +1428,321 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-/* Line 1813 of yacc.c  */
-#line 46 "parser.y"
-    { g_oSprites.clear(); }
+/* Line 1792 of yacc.c  */
+#line 56 "parser.y"
+    {
+              g_vAnimations.clear();
+          }
     break;
 
   case 3:
-/* Line 1813 of yacc.c  */
-#line 48 "parser.y"
-    { g_oSprites.insert(*(yyvsp[(2) - (2)].m_pSprite)); delete (yyvsp[(2) - (2)].m_pSprite); }
+/* Line 1792 of yacc.c  */
+#line 60 "parser.y"
+    {
+              g_vAnimations.push_back((yyvsp[(2) - (2)].m_oAnimation));
+          }
     break;
 
   case 4:
-/* Line 1813 of yacc.c  */
-#line 52 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(4) - (5)].m_pSprite); (yyval.m_pSprite)->m_iSprite = (yyvsp[(2) - (5)].number); }
+/* Line 1792 of yacc.c  */
+#line 66 "parser.y"
+    {
+                Animation an((yyvsp[(1) - (6)].m_iLine), (yyvsp[(2) - (6)].m_sText));
+                an.SetProperties((yyvsp[(4) - (6)].m_vFields));
+                an.SetFrames((yyvsp[(5) - (6)].m_vFrames));
+                (yyval.m_oAnimation) = an;
+            }
     break;
 
   case 5:
-/* Line 1813 of yacc.c  */
-#line 56 "parser.y"
-    { (yyval.m_pSprite) = new Sprite; }
+/* Line 1792 of yacc.c  */
+#line 75 "parser.y"
+    {
+                          std::vector<FieldStorage> fss;
+                          (yyval.m_vFields) = fss;
+                          (yyval.m_vFields).push_back((yyvsp[(1) - (1)].m_oField));
+                      }
     break;
 
   case 6:
-/* Line 1813 of yacc.c  */
-#line 58 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (5)].m_pSprite); (yyval.m_pSprite)->m_iLeft = (yyvsp[(4) - (5)].number); }
+/* Line 1792 of yacc.c  */
+#line 81 "parser.y"
+    {
+                          (yyval.m_vFields) = (yyvsp[(1) - (2)].m_vFields);
+                          (yyval.m_vFields).push_back((yyvsp[(2) - (2)].m_oField));
+                      }
     break;
 
   case 7:
-/* Line 1813 of yacc.c  */
-#line 60 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (5)].m_pSprite); (yyval.m_pSprite)->m_iTop = (yyvsp[(4) - (5)].number); }
+/* Line 1792 of yacc.c  */
+#line 88 "parser.y"
+    {
+                        FieldStorage fs(AP_TILESIZE, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                        (yyval.m_oField) = fs;
+                    }
     break;
 
   case 8:
-/* Line 1813 of yacc.c  */
-#line 62 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (5)].m_pSprite); (yyval.m_pSprite)->m_iWidth = (yyvsp[(4) - (5)].number); }
+/* Line 1792 of yacc.c  */
+#line 93 "parser.y"
+    {
+                        (yyval.m_oField) = (yyvsp[(3) - (4)].m_oField);
+                        (yyval.m_oField).m_iLine = (yyvsp[(1) - (4)].m_iLine);
+                    }
     break;
 
   case 9:
-/* Line 1813 of yacc.c  */
-#line 64 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (5)].m_pSprite); (yyval.m_pSprite)->m_iHeight = (yyvsp[(4) - (5)].number); }
+/* Line 1792 of yacc.c  */
+#line 100 "parser.y"
+    {
+                FieldStorage fs(AP_VIEW, VD_NORTH, (yyvsp[(1) - (1)].m_iLine));
+                (yyval.m_oField) = fs;
+            }
     break;
 
   case 10:
-/* Line 1813 of yacc.c  */
-#line 66 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (5)].m_pSprite); (yyval.m_pSprite)->m_sBaseImage = (yyvsp[(4) - (5)].text); }
+/* Line 1792 of yacc.c  */
+#line 105 "parser.y"
+    {
+                FieldStorage fs(AP_VIEW, VD_EAST, (yyvsp[(1) - (1)].m_iLine));
+                (yyval.m_oField) = fs;
+            }
     break;
 
   case 11:
-/* Line 1813 of yacc.c  */
-#line 68 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (5)].m_pSprite); (yyval.m_pSprite)->SetRecolour((yyvsp[(4) - (5)].text)); }
+/* Line 1792 of yacc.c  */
+#line 110 "parser.y"
+    {
+                FieldStorage fs(AP_VIEW, VD_SOUTH, (yyvsp[(1) - (1)].m_iLine));
+                (yyval.m_oField) = fs;
+            }
     break;
 
   case 12:
-/* Line 1813 of yacc.c  */
-#line 70 "parser.y"
-    { (yyval.m_pSprite) = (yyvsp[(1) - (6)].m_pSprite); (yyval.m_pSprite)->m_aNumber[((yyvsp[(3) - (6)].number)) & 0xFF] = ((yyvsp[(5) - (6)].number)) & 0xFF; }
+/* Line 1792 of yacc.c  */
+#line 115 "parser.y"
+    {
+                FieldStorage fs(AP_VIEW, VD_WEST, (yyvsp[(1) - (1)].m_iLine));
+                (yyval.m_oField) = fs;
+            }
+    break;
+
+  case 13:
+/* Line 1792 of yacc.c  */
+#line 122 "parser.y"
+    {
+                      std::vector<AnimationFrame> elements;
+                      (yyval.m_vFrames) = elements;
+                      (yyval.m_vFrames).push_back((yyvsp[(1) - (1)].m_oFrame));
+                  }
+    break;
+
+  case 14:
+/* Line 1792 of yacc.c  */
+#line 128 "parser.y"
+    {
+                      (yyval.m_vFrames) = (yyvsp[(1) - (2)].m_vFrames);
+                      (yyval.m_vFrames).push_back((yyvsp[(2) - (2)].m_oFrame));
+                  }
+    break;
+
+  case 15:
+/* Line 1792 of yacc.c  */
+#line 135 "parser.y"
+    {
+                     AnimationFrame af((yyvsp[(1) - (5)].m_iLine));
+                     af.SetProperty((yyvsp[(3) - (5)].m_oField));
+                     af.SetElements((yyvsp[(4) - (5)].m_vElements));
+                     (yyval.m_oFrame) = af;
+                 }
+    break;
+
+  case 16:
+/* Line 1792 of yacc.c  */
+#line 144 "parser.y"
+    {
+                    FieldStorage fs;
+                    (yyval.m_oField) = fs;
+                }
+    break;
+
+  case 17:
+/* Line 1792 of yacc.c  */
+#line 149 "parser.y"
+    {
+                    FieldStorage fs(AF_SOUND, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                    (yyval.m_oField) = fs;
+                }
+    break;
+
+  case 18:
+/* Line 1792 of yacc.c  */
+#line 156 "parser.y"
+    {
+                    std::vector<FrameElement> elements;
+                    (yyval.m_vElements) = elements;
+                    (yyval.m_vElements).push_back((yyvsp[(1) - (1)].m_oElement));
+                }
+    break;
+
+  case 19:
+/* Line 1792 of yacc.c  */
+#line 162 "parser.y"
+    {
+                    (yyval.m_vElements) = (yyvsp[(1) - (2)].m_vElements);
+                    (yyval.m_vElements).push_back((yyvsp[(2) - (2)].m_oElement));
+                }
+    break;
+
+  case 20:
+/* Line 1792 of yacc.c  */
+#line 169 "parser.y"
+    {
+                   FrameElement fe((yyvsp[(1) - (4)].m_iLine));
+                   fe.SetProperties((yyvsp[(3) - (4)].m_vFields));
+                   (yyval.m_oElement) = fe;
+               }
+    break;
+
+  case 21:
+/* Line 1792 of yacc.c  */
+#line 177 "parser.y"
+    {
+                    std::vector<FieldStorage> fss;
+                    (yyval.m_vFields) = fss;
+                    (yyval.m_vFields).push_back((yyvsp[(1) - (1)].m_oField));
+                }
+    break;
+
+  case 22:
+/* Line 1792 of yacc.c  */
+#line 183 "parser.y"
+    {
+                    (yyval.m_vFields) = (yyvsp[(1) - (2)].m_vFields);
+                    (yyval.m_vFields).push_back((yyvsp[(2) - (2)].m_oField));
+                }
+    break;
+
+  case 23:
+/* Line 1792 of yacc.c  */
+#line 190 "parser.y"
+    {
+                   FieldStorage fs(FE_TOP, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 24:
+/* Line 1792 of yacc.c  */
+#line 195 "parser.y"
+    {
+                   FieldStorage fs(FE_LEFT, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 25:
+/* Line 1792 of yacc.c  */
+#line 200 "parser.y"
+    {
+                   FieldStorage fs(FE_WIDTH, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 26:
+/* Line 1792 of yacc.c  */
+#line 205 "parser.y"
+    {
+                   FieldStorage fs(FE_HEIGHT, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 27:
+/* Line 1792 of yacc.c  */
+#line 210 "parser.y"
+    {
+                   FieldStorage fs(FE_XOFFSET, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 28:
+/* Line 1792 of yacc.c  */
+#line 215 "parser.y"
+    {
+                   FieldStorage fs(FE_YOFFSET, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 29:
+/* Line 1792 of yacc.c  */
+#line 220 "parser.y"
+    {
+                   FieldStorage fs(FE_IMAGE, (yyvsp[(3) - (4)].m_sText), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 30:
+/* Line 1792 of yacc.c  */
+#line 225 "parser.y"
+    {
+                   FieldStorage fs(FE_RECOLOUR, (yyvsp[(3) - (4)].m_sText), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 31:
+/* Line 1792 of yacc.c  */
+#line 230 "parser.y"
+    {
+                   FieldStorage fs(FE_RECOLLAYER, (yyvsp[(2) - (5)].m_iNumber), (yyvsp[(4) - (5)].m_iNumber), (yyvsp[(1) - (5)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 32:
+/* Line 1792 of yacc.c  */
+#line 235 "parser.y"
+    {
+                   FieldStorage fs(FE_DISPLAY, (yyvsp[(2) - (5)].m_iNumber), (yyvsp[(4) - (5)].m_iNumber), (yyvsp[(1) - (5)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 33:
+/* Line 1792 of yacc.c  */
+#line 240 "parser.y"
+    {
+                   FieldStorage fs(FE_ALPHA, (yyvsp[(3) - (4)].m_iNumber), (yyvsp[(1) - (4)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 34:
+/* Line 1792 of yacc.c  */
+#line 245 "parser.y"
+    {
+                   FieldStorage fs(FE_HORFLIP, 1, (yyvsp[(1) - (1)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
+    break;
+
+  case 35:
+/* Line 1792 of yacc.c  */
+#line 250 "parser.y"
+    {
+                   FieldStorage fs(FE_VERTFLIP, 1, (yyvsp[(1) - (1)].m_iLine));
+                   (yyval.m_oField) = fs;
+               }
     break;
 
 
-/* Line 1813 of yacc.c  */
-#line 1462 "parser.cpp"
+/* Line 1792 of yacc.c  */
+#line 1746 "parser.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1689,12 +1973,14 @@ yyreturn:
 }
 
 
-/* Line 2076 of yacc.c  */
-#line 73 "parser.y"
+/* Line 2055 of yacc.c  */
+#line 256 "parser.y"
 
 
 void yyerror(const char *msg)
 {
-    fprintf(stderr, "Parse error at line %d: %s\n", yylval.line, msg);
+    fprintf(stderr, "Parse error at line %d: %s\n", yylval.m_iLine, msg);
     exit(1);
 }
+
+// vim: et sts=4 sw=4

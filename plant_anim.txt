@@ -1,0 +1,63 @@
+// Plant 'animations'
+
+animation "plant_healthy" {
+    view = north;
+
+    frame {
+        element {
+            base = "xuxo_graphics/VSPR/OB_2306.png";
+            x_offset = -19;
+            y_offset = -40;
+        }
+    }
+}
+
+animation "plant_drooping1" {
+    view = north;
+
+    frame {
+        element {
+            base = "xuxo_graphics/VSPR/OB_2307.png";
+            x_offset = -18;
+            y_offset = -39;
+        }
+    }
+}
+
+animation "plant_drooping2" {
+    view = north;
+
+    frame {
+        element {
+            base = "xuxo_graphics/VSPR/OB_2308.png";
+            x_offset = -16;
+            y_offset = -32;
+        }
+    }
+}
+
+animation "plant_dying" {
+    view = north;
+
+    frame {
+        element {
+            base = "xuxo_graphics/VSPR/OB_2309.png";
+            x_offset = -15;
+            y_offset = -26;
+        }
+    }
+}
+
+animation "plant_dead" {
+    view = north;
+
+    frame {
+        element {
+            base = "xuxo_graphics/VSPR/OB_2310.png";
+            x_offset = -15;
+            y_offset = -20;
+        }
+    }
+}
+
+// vim: et sts=4 sw=4

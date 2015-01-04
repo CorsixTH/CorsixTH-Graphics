@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2013 Albert "Alberth" Hofkamp
+# Copyright (c) 2013-2014 Albert "Alberth" Hofkamp
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -28,12 +28,12 @@ FLEXFLAGS=
 bison --defines=tokens.h --output=parser.cpp parser.y
 flex $FLEXFLAGS --outfile=scanner.cpp scanner.l
 
+g++ $CCFLAGS -c -o ast.o ast.cpp
 g++ $CCFLAGS -c -o parser.o parser.cpp
 g++ $CCFLAGS -c -o scanner.o scanner.cpp
-g++ $CCFLAGS -c -o encode.o encode.cpp
-g++ $CCFLAGS -c -o ast.o ast.cpp
+g++ $CCFLAGS -c -o main.o main.cpp
 g++ $CCFLAGS -c -o image.o image.cpp
-g++ $CCFLAGS -c -o output.o output.cpp
+g++ $CCFLAGS -c -o storage.o storage.cpp
 
-g++ $CCFLAGS -o encoder parser.o scanner.o encode.o ast.o image.o output.o -lpng
+g++ $CCFLAGS -o encoder parser.o scanner.o main.o ast.o image.o storage.o -lpng
 

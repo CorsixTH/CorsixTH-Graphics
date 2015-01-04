@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Albert "Alberth" Hofkamp
+Copyright (c) 2014 Albert "Alberth" Hofkamp
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -20,11 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef OUTPUT_H
-#define OUTPUT_H
+#ifndef STORAGE_H
+#define STORAGE_H
 
 #define BUF_SIZE    100000
 
+/** Block of data in the output file. */
 class DataBlock
 {
 public:
@@ -39,6 +40,7 @@ public:
     DataBlock *m_pNext;
 };
 
+/** Output file. */
 class Output
 {
 public:
@@ -49,12 +51,41 @@ public:
 
     void Uint8(unsigned char byte);
     void Uint16(int val);
+    void Uint32(unsigned int val);
+    void String(const std::string &str);
     void Write(int address, unsigned char byte);
+    void Write32(int address, unsigned int iVal);
     int Reserve(int size);
+
+    int GetSize();
+    unsigned char *GetData();
 
     DataBlock *m_pFirst;
     DataBlock *m_pLast;
 };
+
+
+class EncodedSprite
+{
+public:
+    EncodedSprite();
+    EncodedSprite(unsigned char *address, int size);
+    EncodedSprite(const EncodedSprite &es);
+    EncodedSprite &operator=(const EncodedSprite &es);
+    ~EncodedSprite();
+
+    void CopyData(const unsigned char *data, int size);
+    void TakeData(unsigned char *data, int size);
+
+    unsigned char *m_pData; ///< Pointer to the data.
+    int m_iSize;            ///< Length of the data.
+    bool m_bOwned;          ///< Whether the object owns the data.
+};
+
+bool operator<(const EncodedSprite &es1, const EncodedSprite &e2);
+
+
+void Encode(const char *outFname);
 
 #endif
 
