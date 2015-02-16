@@ -26,6 +26,9 @@ SOFTWARE.
 #include <png.h>
 #include "image.h"
 
+/** Number of colour channels in libpng for a single RGBA pixel. */
+const int RGBA_CHANNELS_PER_PIXEL = 4;
+
 uint32 MakeRGBA(uint8 r, uint8 g, uint8 b, uint8 a)
 {
     assert(sizeof(uint32) == 4); // Not really the good place, but it has to be checked somewhere!
@@ -49,15 +52,15 @@ Image32bpp::Image32bpp(int iWidth, int iHeight)
 {
     this->iWidth = iWidth;
     this->iHeight = iHeight;
-    pData = (uint32 *)malloc(4 * iWidth * iHeight);
+    pData = (uint32 *)malloc(RGBA_CHANNELS_PER_PIXEL * iWidth * iHeight);
 }
 
 Image32bpp::Image32bpp(const Image32bpp &img)
 {
     this->iWidth = img.iWidth;
     this->iHeight = img.iHeight;
-    pData = (uint32 *)malloc(4 * iWidth * iHeight);
-    memcpy(pData, img.pData, 4 * iWidth * iHeight);
+    pData = (uint32 *)malloc(RGBA_CHANNELS_PER_PIXEL * iWidth * iHeight);
+    memcpy(pData, img.pData, RGBA_CHANNELS_PER_PIXEL * iWidth * iHeight);
 }
 
 Image32bpp::~Image32bpp()
@@ -339,7 +342,7 @@ Image32bpp *Load32Bpp(const std::string &sFilename, int line, int *left, int *wi
     uint32 *pData = img->pData;
     for (int i = 0; i < *height; i++)
     {
-        uint8 *pRow = pRows[*top + i] + *left;
+        uint8 *pRow = pRows[*top + i] + (*left * RGBA_CHANNELS_PER_PIXEL);
         for (int j = 0; j < *width; j++)
         {
             *pData++ = MakeRGBA(pRow[0], pRow[1], pRow[2], pRow[3]);
