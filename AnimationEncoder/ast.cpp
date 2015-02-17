@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//! @file ast.cpp Abstract Syntax Tree (AST) classes for storing parsed information.
+
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
@@ -32,22 +34,21 @@ std::map<AnimationGroupKey, AnimationGroup> g_mapAnimGroups; ///< Available anim
 /** Name of the program. */
 #define PROGNAME "encoder"
 
-/** Max layer class. */
-#define MAX_DISPLAY_COND 12
+static const int MAX_DISPLAY_COND = 12; ///< Max layer class.
 
-/**
- * Return the tile size to use if none was specified.
- * @return The default tile size.
+//! Return the tile size to use if none was specified.
+/*!
+    @return The default tile size.
  */
 static int GetDefaultTileSize()
 {
     return 64;
 }
 
-/**
- * Is the provided tile size valid?
- * @param size Tile size to test.
- * @return Whether the given tile size is valid.
+//! Is the provided tile size valid?
+/*!
+    @param size Tile size to test.
+    @return Whether the given tile size is valid.
  */
 static bool IsValidTileSize(int size)
 {
@@ -170,9 +171,9 @@ FrameElement &FrameElement::operator=(const FrameElement &fe)
 }
 
 
-/**
- * Set the properties of the element.
- * @param fields Properties to assign.
+//! Set the properties of the element.
+/*!
+    @param fields Properties to assign.
  */
 void FrameElement::SetProperties(const std::vector<FieldStorage> &fields)
 {
@@ -288,16 +289,12 @@ void FrameElement::Check()
     }
 }
 
-static const int OP_TRANSPARENT = 0;
-static const int OP_OPAQUE = 255;
-
-
-/**
- * Look ahead in the recolour bitmaps to check when the next recoloured pixels will occur.
- * @param iCount Current index in the image.
- * @param iEndCount End of the image.
- * @param pLayer Recolouring bitmap (if available).
- * @return Number of pixels to go before the next recoloured pixel (limited to 63 look ahead).
+//! Look ahead in the recolour bitmaps to check when the next recoloured pixels will occur.
+/*!
+    @param iCount Current index in the image.
+    @param iEndCount End of the image.
+    @param pLayer Recolouring bitmap (if available).
+    @return Number of pixels to go before the next recoloured pixel (limited to 63 look ahead).
  */
 static int GetDistanceToNextRecolour(const uint32 iCount, const uint32 iEndCount, const Image8bpp *pLayer)
 {
@@ -314,13 +311,13 @@ static int GetDistanceToNextRecolour(const uint32 iCount, const uint32 iEndCount
     return iLength;
 }
 
-/**
- * Get the recolour table to use, and the number of pixels to recolour.
- * @param iCount Current index in the image.
- * @param iEndCount End of the image.
- * @param pLayer Recolouring bitmap.
- * @param pLayerNumber [out] Number of the recolouring table to use.
- * @return Number of pixels to recolour from the current position.
+//! Get the recolour table to use, and the number of pixels to recolour.
+/*!
+    @param iCount Current index in the image.
+    @param iEndCount End of the image.
+    @param pLayer Recolouring bitmap.
+    @param pLayerNumber [out] Number of the recolouring table to use.
+    @return Number of pixels to recolour from the current position.
  */
 static int GetRecolourInformation(const uint32 iCount, const uint32 iEndCount, const Image8bpp *pLayer, uint8 *pLayerNumber)
 {
@@ -335,12 +332,12 @@ static int GetRecolourInformation(const uint32 iCount, const uint32 iEndCount, c
     return iLength;
 }
 
-/**
- * Look ahead in the base image to check how many pixels from the current position have the same opacity.
- * @param iCount Current index in the image.
- * @param iEndCount End of the image.
- * @parswm oBase Base image.
- * @return Number of pixels to go before the opacity of the current pixel changes (limited to 63 look ahead).
+//! Look ahead in the base image to check how many pixels from the current position have the same opacity.
+/*!
+    @param iCount Current index in the image.
+    @param iEndCount End of the image.
+    @param oBase Base image.
+    @return Number of pixels to go before the opacity of the current pixel changes (limited to 63 look ahead).
  */
 static int GetDistanceToNextTransparency(const uint32 iCount, const uint32 iEndCount, const Image32bpp &oBase)
 {
@@ -355,12 +352,12 @@ static int GetDistanceToNextTransparency(const uint32 iCount, const uint32 iEndC
     return iLength;
 }
 
-/**
- * Write the RGB colour for the next \a iLength pixels, starting from the \a iCount offset.
- * @param oBase Base image to encode.
- * @param iCount Current index in the image.
- * @param iLength Number of pixels to process.
- * @param pDest Destination to write to.
+//! Write the RGB colour for the next \a iLength pixels, starting from the \a iCount offset.
+/*!
+    @param oBase Base image to encode.
+    @param iCount Current index in the image.
+    @param iLength Number of pixels to process.
+    @param pDest Destination to write to.
  */
 static void WriteColour(const Image32bpp &oBase, uint32 iCount, int iLength, Output *pDest)
 {
@@ -375,12 +372,12 @@ static void WriteColour(const Image32bpp &oBase, uint32 iCount, int iLength, Out
     }
 }
 
-/**
- * Write the table index for the next \a iLength pixels, starting from the \a iCount offset.
- * @param oBase Base image to encode.
- * @param iCount Current index in the image.
- * @param iLength Number of pixels to process.
- * @param pDest Destination to write to.
+//! Write the table index for the next \a iLength pixels, starting from the \a iCount offset.
+/*!
+    @param oBase Base image to encode.
+    @param iCount Current index in the image.
+    @param iLength Number of pixels to process.
+    @param pDest Destination to write to.
  */
 static void WriteTableIndex(const Image32bpp &oBase, uint32 iCount, int iLength, Output *pDest)
 {
@@ -396,9 +393,7 @@ static void WriteTableIndex(const Image32bpp &oBase, uint32 iCount, int iLength,
     }
 }
 
-/**
- * Encode a 32bpp image from the \a oBase image, and optionally the recolouring \a pLayer bitmap.
- */
+//! Encode a 32bpp image from the \a oBase image, and optionally the recolouring \a pLayer bitmap.
 static void Encode32bpp(int iWidth, int iHeight, const Image32bpp &oBase, const Image8bpp *pLayer, Output *pDest, const unsigned char *pNumber)
 {
     const uint32 iPixCount = iWidth * iHeight;
@@ -426,13 +421,13 @@ static void Encode32bpp(int iWidth, int iHeight, const Image32bpp &oBase, const 
         assert(iLength > 0);
 
         uint8 iOpacity = GetA(oBase.Get(iCount));
-        if (iOpacity == OP_OPAQUE) { // Fixed non-transparent 32bpp pixels (RGB).
+        if (iOpacity == OPAQUE) { // Fixed non-transparent 32bpp pixels (RGB).
             pDest->Uint8(iLength);
             WriteColour(oBase, iCount, iLength, pDest);
             iCount += iLength;
             continue;
         }
-        if (iOpacity == OP_TRANSPARENT) { // Fixed fully transparent pixels.
+        if (iOpacity == TRANSPARENT) { // Fixed fully transparent pixels.
             pDest->Uint8(128 + iLength);
             iCount += iLength;
             continue;
@@ -511,9 +506,9 @@ AnimationFrame &AnimationFrame::operator=(const AnimationFrame &af)
     return *this;
 }
 
-/**
- * Set the properties of the frame.
- * @param field Property to set (if not empty).
+//! Set the properties of the frame.
+/*!
+    @param field Property to set (if not empty).
  */
 void AnimationFrame::SetProperty(const FieldStorage &field)
 {
@@ -521,16 +516,16 @@ void AnimationFrame::SetProperty(const FieldStorage &field)
         m_iSound = field.m_iValue;
 }
 
-/**
- * Set the elements of the frame.
- * @param elements Elements to assign.
+//! Set the elements of the frame.
+/*!
+    @param elements Elements to assign.
  */
 void AnimationFrame::SetElements(const std::vector<FrameElement> &elements)
 {
     m_vElements = elements;
 }
 
-/** Perform integrity checking on the supplied data. */
+//! Perform integrity checking on the supplied data.
 void AnimationFrame::Check()
 {
     if (m_vElements.size() == 0)
@@ -582,9 +577,9 @@ Animation &Animation::operator=(const Animation &an)
     return *this;
 }
 
-/**
- * Set the properties of the animation.
- * @param fields Properties to assign.
+//! Set the properties of the animation.
+/*!
+    @param fields Properties to assign.
  */
 void Animation::SetProperties(const std::vector<FieldStorage> &fields)
 {
@@ -620,16 +615,16 @@ void Animation::SetProperties(const std::vector<FieldStorage> &fields)
     }
 }
 
-/**
- * Copy the frames into the animation.
- * @param frames Frames to copy.
+//! Copy the frames into the animation.
+/*!
+    @param frames Frames to copy.
  */
 void Animation::SetFrames(const std::vector<AnimationFrame> &frames)
 {
     m_vFrames = frames;
 }
 
-/** Perform integrity checking on the supplied data. */
+//! Perform integrity checking on the supplied data.
 void Animation::Check()
 {
     if (m_iTileSize < 0)

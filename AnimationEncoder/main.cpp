@@ -19,6 +19,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+//! @file main.cpp Main driver program.
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -26,7 +29,7 @@ SOFTWARE.
 #include "scanparse.h"
 #include "storage.h"
 
-/** Perform type checking of the parsed input. */
+//! Perform type checking of the parsed input.
 static void Check()
 {
     AnimationIterator iter;

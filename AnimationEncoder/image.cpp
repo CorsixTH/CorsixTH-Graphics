@@ -19,6 +19,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+//! @file image.cpp PNG file loader code.
+
 #include <cstdlib>
 #include <cassert>
 #include <cstring>
@@ -26,8 +29,28 @@ SOFTWARE.
 #include <png.h>
 #include "image.h"
 
-/** Number of colour channels in libpng for a single RGBA pixel. */
-const int RGBA_CHANNELS_PER_PIXEL = 4;
+const int RGBA_CHANNELS_PER_PIXEL = 4;  ///< Number of colour channels in libpng for a single RGBA pixel.
+
+/** Channel numbers of an RGBA pixel. */
+enum RgbaChannelNumber
+{
+    CH_RED,     ///< Red colour channel index.
+    CH_GREEN,   ///< Green colour channel index.
+    CH_BLUE,    ///< Blue colour channel index.
+    CH_OPACITY, ///< Opacity channel index.
+};
+
+/** Offsets in #uint32 for encoding a RGBA pixel. */
+enum RgbaPixelEncoding
+{
+    PXENC_RED     = 0,  ///< Lowest bit containing the red colour channel information.
+    PXENC_GREEN   = 8,  ///< Lowest bit containing the green colour channel information.
+    PXENC_BLUE    = 16, ///< Lowest bit containing the blue colour channel information.
+    PXENC_OPACITY = 24, ///< Lowest bit containing the opacity channel information.
+
+    PXENC_CHANNEL_MASK = 0xFF, ///< Mask to apply to get a single channel from the encoded pixel.
+};
+
 
 uint32 MakeRGBA(uint8 r, uint8 g, uint8 b, uint8 a)
 {
@@ -35,18 +58,17 @@ uint32 MakeRGBA(uint8 r, uint8 g, uint8 b, uint8 a)
 
     uint32 ret;
     uint32 x;
-    x = r; ret = x;
-    x = g; ret |= (x << 8);
-    x = b; ret |= (x << 16);
-    x = a; ret |= (x << 24);
+    x = r; ret  = (x << PXENC_RED);
+    x = g; ret |= (x << PXENC_GREEN);
+    x = b; ret |= (x << PXENC_BLUE);
+    x = a; ret |= (x << PXENC_OPACITY);
     return ret;
 }
 
-uint8 GetR(uint32 rgba) { return  rgba        & 0xFF; }
-uint8 GetG(uint32 rgba) { return (rgba >> 8)  & 0xFF; }
-uint8 GetB(uint32 rgba) { return (rgba >> 16) & 0xFF; }
-uint8 GetA(uint32 rgba) { return (rgba >> 24) & 0xFF; }
-
+uint8 GetR(uint32 rgba) { return (rgba >> PXENC_RED)     & PXENC_CHANNEL_MASK; }
+uint8 GetG(uint32 rgba) { return (rgba >> PXENC_GREEN)   & PXENC_CHANNEL_MASK; }
+uint8 GetB(uint32 rgba) { return (rgba >> PXENC_BLUE)    & PXENC_CHANNEL_MASK; }
+uint8 GetA(uint32 rgba) { return (rgba >> PXENC_OPACITY) & PXENC_CHANNEL_MASK; }
 
 Image32bpp::Image32bpp(int iWidth, int iHeight)
 {
@@ -107,8 +129,18 @@ unsigned char Image8bpp::Get(int offset) const
     return pData[offset];
 }
 
+//! Open an image (.png) file.
+/*!
+    @param sFilename Filename of the file to open.
+    @param [out] pngPtr Libpng data structure.
+    @param [out] infoPtr Libpng info structure.
+    @param [out] endInfo Libpng info structure.
+    @param [out] pRows Rows of pixel channel information, read from the file.
+ */
 static void OpenFile(const std::string &sFilename, png_structp *pngPtr, png_infop *infoPtr, png_infop *endInfo, uint8 ***pRows)
 {
+    const int PNG_SIGNATURE_SIZE = 4; // Number of bytes to read from the header for checking the given file is a PNG file.
+
     FILE *pFile = fopen(sFilename.c_str(), "rb");
     if(pFile == NULL)
     {
@@ -116,14 +148,14 @@ static void OpenFile(const std::string &sFilename, png_structp *pngPtr, png_info
         exit(1);
     }
 
-    unsigned char header[4];
-    if(fread(header, 1, 4, pFile) != 4)
+    unsigned char header[PNG_SIGNATURE_SIZE];
+    if(fread(header, 1, PNG_SIGNATURE_SIZE, pFile) != PNG_SIGNATURE_SIZE)
     {
         fprintf(stderr, "Could not read header of \"%s\".\n", sFilename.c_str());
         fclose(pFile);
         exit(1);
     }
-    bool bIsPng = !png_sig_cmp(header, 0, 4);
+    bool bIsPng = !png_sig_cmp(header, 0, PNG_SIGNATURE_SIZE);
     if(!bIsPng)
     {
         fprintf(stderr, "Header of \"%s\" indicates it is not a PNG file.\n", sFilename.c_str());
@@ -166,23 +198,24 @@ static void OpenFile(const std::string &sFilename, png_structp *pngPtr, png_info
 
     /* Initialize for file reading. */
     png_init_io(*pngPtr, pFile);
-    png_set_sig_bytes(*pngPtr, 4);
+    png_set_sig_bytes(*pngPtr, PNG_SIGNATURE_SIZE);
 
     png_read_png(*pngPtr, *infoPtr, PNG_TRANSFORM_IDENTITY, NULL);
     *pRows = png_get_rows(*pngPtr, *infoPtr);
     fclose(pFile);
 }
 
-/** Perform cropping on the image.
- * @param pRows Data of the sprite, as loaded from the .PNG file.
- * @param[inout] left_edge Coordinate of the left-most column of the sprite. Updated in-place.
- * @param[inout] top_edge Coordinate of the top-most row of the sprite. Updated in-place.
- * @param[inout] width Number of columns in the image. Updated in-place.
- * @param[inout] height Number of rows in the image. Updated in-place.
- * @param[inout] xoffset Horizontal offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
- * @param[inout] yoffset Vertical offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
+//! Perform cropping on the image.
+/*!
+    @param pRows Data of the sprite, as loaded from the .PNG file.
+    @param[inout] left_edge Coordinate of the left-most column of the sprite. Updated in-place.
+    @param[inout] top_edge Coordinate of the top-most row of the sprite. Updated in-place.
+    @param[inout] width Number of columns in the image. Updated in-place.
+    @param[inout] height Number of rows in the image. Updated in-place.
+    @param[inout] xoffset Horizontal offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
+    @param[inout] yoffset Vertical offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
  */
-void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, int *height, int *xoffset, int *yoffset)
+static void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, int *height, int *xoffset, int *yoffset)
 {
     int xpoint = *left_edge - *xoffset;
     int ypoint = *top_edge - *yoffset;
@@ -197,7 +230,7 @@ void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, i
         for (int y = top; y <= bottom; y++)
         {
             uint8 *pPixel = pRows[y] + left;
-            if (pPixel[3] != 0)
+            if (pPixel[CH_OPACITY] != TRANSPARENT)
             {
                 ok = false;
                 break;
@@ -214,7 +247,7 @@ void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, i
         for (int y = top; y <= bottom; y++)
         {
             uint8 *pPixel = pRows[y] + right;
-            if (pPixel[3] != 0)
+            if (pPixel[CH_OPACITY] != TRANSPARENT)
             {
                 ok = false;
                 break;
@@ -232,7 +265,7 @@ void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, i
         for (int x = left; x <= right; x++)
         {
             uint8 *pPixel = pRows[top] + x;
-            if (pPixel[3] != 0)
+            if (pPixel[CH_OPACITY] != TRANSPARENT)
             {
                 ok = false;
                 break;
@@ -249,7 +282,7 @@ void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, i
         for (int x = left; x <= right; x++)
         {
             uint8 *pPixel = pRows[bottom] + x;
-            if (pPixel[3] != 0)
+            if (pPixel[CH_OPACITY] != TRANSPARENT)
             {
                 ok = false;
                 break;
@@ -269,18 +302,6 @@ void PerformCropping(uint8 **pRows, int *left_edge, int *top_edge, int *width, i
     *yoffset = top - ypoint;
 }
 
-/**
- * Load a 32bpp sprite from a file.
- * @param sFilename Name of the sprite file to load.
- * @param line Line number denoting the sprite definition in the input file.
- * @param[inout] left Left-most column in the PNG that is part of the sprite. Updated in-place.
- * @param[inout] width Number of columns in the sprite. Updated in-place.
- * @param[inout] top Top-most row in the PNG that is part of the sprite. Updated in-place.
- * @param[inout] height Number of rows in the sprite. Updated in-place.
- * @param[inout] xoffset Horizontal offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
- * @param[inout] yoffset Vertical offset for displaying the sprite relative to the farthest corner of the tile. Updated in-place.
- * @return The loaded sprite.
- */
 Image32bpp *Load32Bpp(const std::string &sFilename, int line, int *left, int *width, int *top, int *height, int *xoffset, int *yoffset)
 {
     png_structp pngPtr;
@@ -345,8 +366,8 @@ Image32bpp *Load32Bpp(const std::string &sFilename, int line, int *left, int *wi
         uint8 *pRow = pRows[*top + i] + (*left * RGBA_CHANNELS_PER_PIXEL);
         for (int j = 0; j < *width; j++)
         {
-            *pData++ = MakeRGBA(pRow[0], pRow[1], pRow[2], pRow[3]);
-            pRow += 4;
+            *pData++ = MakeRGBA(pRow[CH_RED], pRow[CH_GREEN], pRow[CH_BLUE], pRow[CH_OPACITY]);
+            pRow += RGBA_CHANNELS_PER_PIXEL;
         }
     }
 
@@ -380,7 +401,7 @@ Image8bpp *Load8Bpp(const std::string &sFilename, int line, int left, int width,
 
     if (iBitDepth != 8)
     {
-        fprintf(stderr, "Sprite at line %d: \"%s\" is not an 8bpp file (the channel is not 8 bit wide\n", line, sFilename.c_str());
+        fprintf(stderr, "Sprite at line %d: \"%s\" is not an 8bpp file (the channel is not 8 bit wide)\n", line, sFilename.c_str());
         png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
         exit(1);
     }

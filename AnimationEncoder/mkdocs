@@ -1,0 +1,4 @@
+#!/bin/sh
+# Build documentation.
+doxygen doxy.cfg
+echo "Output in doc/html/index.html"
