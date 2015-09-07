@@ -20,27 +20,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//! @file storage.h Generation of the output, and in-memory storage.
+
 #ifndef STORAGE_H
 #define STORAGE_H
 
-#define BUF_SIZE    100000
+static const int BUF_SIZE = 100000; ///< Size of a data block in #Output.
 
-/** Block of data in the output file. */
+//! Block of data in the output file.
 class DataBlock
 {
 public:
     DataBlock();
 
+    //!
+    /*!
+        @return Whether the data block is full.
+     */
     bool Full();
+
+    //! Append a \a byte to the block.
+    /*!
+        @param byte Byte to append.
+     */
     void Add(unsigned char byte);
+
+    //! Write data of the block to the given file handle.
+    /*!
+        @param handle File handle for writing the data.
+     */
     void Write(FILE *handle);
 
-    unsigned char buffer[BUF_SIZE];
-    int m_iUsed;
-    DataBlock *m_pNext;
+    unsigned char buffer[BUF_SIZE]; ///< Data storage.
+    int m_iUsed;                    ///< Number of used bytes.
+    DataBlock *m_pNext;             ///< Next data block.
 };
 
-/** Output file. */
+//! Output file.
 class Output
 {
 public:
@@ -60,8 +76,8 @@ public:
     int GetSize();
     unsigned char *GetData();
 
-    DataBlock *m_pFirst;
-    DataBlock *m_pLast;
+    DataBlock *m_pFirst; ///< First data block of the output (if not \c NULL ).
+    DataBlock *m_pLast;  ///< Last data block of the output (if not \c NULL ).
 };
 
 

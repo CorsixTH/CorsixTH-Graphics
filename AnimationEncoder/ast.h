@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//! @file ast.h Abstract Syntax Tree (AST) classes for storing parsed information.
+
 #ifndef AST_H
 #define AST_H
 
@@ -30,10 +32,10 @@ SOFTWARE.
 
 class Output;
 
-/* Number of bytes in a sprite block excluding the actual sprite data. */
-#define SPRITE_NON_DATA_SIZE 10
+//! Number of bytes in a sprite block excluding the actual sprite data.
+static const int SPRITE_NON_DATA_SIZE = 10;
 
-/** Enumeration listing the fields of the data structures. */
+//! Enumeration listing the fields of the data structures.
 enum FieldNumber
 {
     FN_NOTHING,    ///< Empty storage.
@@ -60,7 +62,7 @@ enum FieldNumber
     FN_NUMBER_ENTRIES, ///< Number of fields.
 };
 
-/** Temporary storage of an assigned field. */
+//! Temporary storage of an assigned field.
 class FieldStorage
 {
 public:
@@ -80,7 +82,7 @@ public:
     int m_iLine;         ///< Line number with the assignment.
 };
 
-/** Pair of integer numbers. */
+//! Pair of integer numbers.
 class PairInt
 {
 public:
@@ -103,7 +105,7 @@ public:
     int m_iValue; ///< Value of the pair.
 };
 
-/** An element (a sprite) in a frame. */
+//! An element (a sprite) in a frame.
 class FrameElement
 {
 public:
@@ -135,7 +137,7 @@ public:
     bool m_bVertFlip;             ///< Whether to flip the sprite vertically.
 };
 
-/** A frame in an animation. */
+//! A frame in an animation.
 class AnimationFrame
 {
 public:
@@ -155,7 +157,7 @@ public:
     std::vector<FrameElement> m_vElements; ///< Frame elements.
 };
 
-/** Animation view direction. */
+//! Animation view direction.
 enum ViewDirection
 {
     VD_NORTH,   ///< Viewing north.
@@ -166,7 +168,7 @@ enum ViewDirection
     VD_INVALID, ///< Invalid direction (not specified).
 };
 
-/** An animation. */
+//! An animation.
 class Animation
 {
 public:
@@ -187,7 +189,7 @@ public:
     std::vector<AnimationFrame> m_vFrames; ///< Frames of the animation.
 };
 
-/** An animation with a name, a tile size, and 1 to 4 viewing directions. */
+//! An animation with a name, a tile size, and 1 to 4 viewing directions.
 class AnimationGroup
 {
 public:
@@ -201,7 +203,7 @@ public:
     const Animation *m_aAnims[4]; ///< Collected animations (if not \c null).
 };
 
-/** Key of an animation group. */
+//! Key of an animation group.
 class AnimationGroupKey
 {
 public:
@@ -214,7 +216,12 @@ public:
     int m_iTileSize;        ///< Tile size.
 };
 
-/** Comparator for storing animation groups in a set. */
+//! Comparator for storing animation groups in a set.
+/*!
+    @param agk1 First key to compare.
+    @param agk2 Second key to compare.
+    @return \c true iff first key should be put before the second key.
+ */
 inline bool operator<(const AnimationGroupKey &agk1, const AnimationGroupKey &agk2)
 {
     if (agk1.m_iTileSize != agk2.m_iTileSize)

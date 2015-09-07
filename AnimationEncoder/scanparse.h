@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//! @file scanparse.h Interface data and functions between scanner and parser productions.
+
 #ifndef SCAN_PARSE_H
 #define SCAN_PARSE_H
 
