@@ -37,7 +37,7 @@ enum RgbaChannelNumber
     CH_RED,     ///< Red colour channel index.
     CH_GREEN,   ///< Green colour channel index.
     CH_BLUE,    ///< Blue colour channel index.
-    CH_OPACITY, ///< Opacity channel index.
+    CH_OPACITY ///< Opacity channel index.
 };
 
 /** Offsets in #uint32 for encoding a RGBA pixel. */
@@ -48,7 +48,7 @@ enum RgbaPixelEncoding
     PXENC_BLUE    = 16, ///< Lowest bit containing the blue colour channel information.
     PXENC_OPACITY = 24, ///< Lowest bit containing the opacity channel information.
 
-    PXENC_CHANNEL_MASK = 0xFF, ///< Mask to apply to get a single channel from the encoded pixel.
+    PXENC_CHANNEL_MASK = 0xFF ///< Mask to apply to get a single channel from the encoded pixel.
 };
 
 

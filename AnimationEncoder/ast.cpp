@@ -345,7 +345,7 @@ static int GetDistanceToNextTransparency(const uint32 iCount, const uint32 iEndC
     if (iLength > 63) iLength = 63; // No need to look ahead further.
 
     uint8 iOpacity = GetA(oBase.Get(iCount));
-    for (uint i = 1; i < iLength; i++)
+    for (unsigned int i = 1; i < iLength; i++)
     {
         if (iOpacity != GetA(oBase.Get(iCount + i))) return i;
     }

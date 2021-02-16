@@ -59,7 +59,7 @@ enum FieldNumber
     AP_TILESIZE,   ///< Tile size
     AP_VIEW,       ///< View direction
 
-    FN_NUMBER_ENTRIES, ///< Number of fields.
+    FN_NUMBER_ENTRIES ///< Number of fields.
 };
 
 //! Temporary storage of an assigned field.
@@ -165,7 +165,7 @@ enum ViewDirection
     VD_SOUTH,   ///< Viewing south.
     VD_WEST,    ///< Viewing west.
 
-    VD_INVALID, ///< Invalid direction (not specified).
+    VD_INVALID ///< Invalid direction (not specified).
 };
 
 //! An animation.
