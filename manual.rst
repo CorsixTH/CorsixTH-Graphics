@@ -213,7 +213,7 @@ generator (*lex* or *flex*), and a parser generator (*yacc* or *bison*). To
 compile all code, you need a C++ compiler, for example *g++*. The code uses
 ``libpng`` for reading the images, so that library must be available to build
 against as well. The build process for a typical Linux machine is defined in
-the ``mk`` file.
+the ``Makefile`` file, run by *make*.
 
 If you don't have a scanner generator or a parser generator, the source code
 that they generate is also included in the directory, allowing you to skip
