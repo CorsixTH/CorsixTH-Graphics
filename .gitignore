@@ -1,0 +1,8 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Generated files
+*.o
+encoder
+doc/
